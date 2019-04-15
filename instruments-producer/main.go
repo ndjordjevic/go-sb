@@ -1,8 +1,11 @@
 package main
 
 import (
+	"bytes"
+	"encoding/json"
 	"fmt"
 	"github.com/Shopify/sarama"
+	"google.golang.org/genproto/googleapis/type/date"
 	"gopkg.in/alecthomas/kingpin.v2"
 )
 
@@ -12,7 +15,36 @@ var (
 	maxRetry   = kingpin.Flag("maxRetry", "Retry limit").Default("5").Int()
 )
 
+type Instrument struct {
+	ShortName      string
+	LongName       string
+	ISIN           string
+	Currency       string
+	Market         string
+	LotSize        int
+	ExpirationDate date.Date
+}
+
 func main() {
+	instrumentToSend := Instrument{
+		ShortName: "BMW",
+		LongName:  "BMW Incorporation",
+		ISIN:      "BMW001",
+		Currency:  "EUR",
+		Market:    "Eurex",
+		LotSize:   1,
+		ExpirationDate: date.Date{
+			Year:  2019,
+			Month: 12,
+			Day:   31,
+		},
+	}
+
+	byteArray := convertToByteArray(instrumentToSend)
+
+	fmt.Println(byteArray)
+	fmt.Println(string(byteArray))
+
 	kingpin.Parse()
 	config := sarama.NewConfig()
 	config.Producer.RequiredAcks = sarama.WaitForAll
@@ -29,11 +61,23 @@ func main() {
 	}()
 	msg := &sarama.ProducerMessage{
 		Topic: *topic,
-		Value: sarama.StringEncoder("Something Cool4"),
+		Value: sarama.ByteEncoder(byteArray),
 	}
 	partition, offset, err := producer.SendMessage(msg)
 	if err != nil {
 		panic(err)
 	}
 	fmt.Printf("Message is stored in topic(%s)/partition(%d)/offset(%d)\n", *topic, partition, offset)
+}
+
+func convertToByteArray(instrument Instrument) []byte {
+	reqBodyBytes := new(bytes.Buffer)
+	err := json.NewEncoder(reqBodyBytes).Encode(instrument)
+
+	if err != nil {
+		fmt.Printf("Error during instrument encoding: %v", err)
+		return nil
+	}
+
+	return reqBodyBytes.Bytes()
 }

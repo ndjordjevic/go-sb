@@ -1,12 +1,24 @@
 package main
 
 import (
+	"encoding/json"
 	"fmt"
 	"github.com/Shopify/sarama"
+	"google.golang.org/genproto/googleapis/type/date"
 	"gopkg.in/alecthomas/kingpin.v2"
 	"os"
 	"os/signal"
 )
+
+type Instrument struct {
+	ShortName      string
+	LongName       string
+	ISIN           string
+	Currency       string
+	Market         string
+	LotSize        int
+	ExpirationDate date.Date
+}
 
 var (
 	brokerList = kingpin.Flag("brokerList", "List of brokers to connect").Default("localhost:9092").Strings()
@@ -38,6 +50,7 @@ func main() {
 	signal.Notify(signals, os.Interrupt)
 	doneCh := make(chan struct{})
 	go func() {
+		var instrument Instrument
 		for {
 			select {
 			case err := <-consumer.Errors():
@@ -45,6 +58,11 @@ func main() {
 			case msg := <-consumer.Messages():
 				*messageCountStart++
 				fmt.Println("Received messages", string(msg.Key), string(msg.Value))
+				err := json.Unmarshal(msg.Value, &instrument)
+				if err != nil {
+					return
+				}
+				fmt.Println(instrument.ShortName)
 			case <-signals:
 				fmt.Println("Interrupt is detected")
 				doneCh <- struct{}{}
