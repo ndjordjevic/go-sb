@@ -1,4 +1,4 @@
-package main
+package kafka_clients
 
 import (
 	"encoding/json"
