@@ -4,21 +4,11 @@ import (
 	"encoding/json"
 	"fmt"
 	"github.com/Shopify/sarama"
-	"google.golang.org/genproto/googleapis/type/date"
+	"github.com/ndjordjevic/kafka_clients"
 	"gopkg.in/alecthomas/kingpin.v2"
 	"os"
 	"os/signal"
 )
-
-type Instrument struct {
-	ShortName      string
-	LongName       string
-	ISIN           string
-	Currency       string
-	Market         string
-	LotSize        int
-	ExpirationDate date.Date
-}
 
 var (
 	brokerList = kingpin.Flag("brokerList", "List of brokers to connect").Default("localhost:9092").Strings()
@@ -50,7 +40,7 @@ func main() {
 	signal.Notify(signals, os.Interrupt)
 	doneCh := make(chan struct{})
 	go func() {
-		var instrument Instrument
+		var instrument kafka_clients.Instrument
 		for {
 			select {
 			case err := <-consumer.Errors():

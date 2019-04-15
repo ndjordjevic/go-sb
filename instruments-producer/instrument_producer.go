@@ -5,6 +5,7 @@ import (
 	"encoding/json"
 	"fmt"
 	"github.com/Shopify/sarama"
+	"github.com/ndjordjevic/kafka_clients"
 	"google.golang.org/genproto/googleapis/type/date"
 	"gopkg.in/alecthomas/kingpin.v2"
 )
@@ -15,18 +16,8 @@ var (
 	maxRetry   = kingpin.Flag("maxRetry", "Retry limit").Default("5").Int()
 )
 
-type Instrument struct {
-	ShortName      string
-	LongName       string
-	ISIN           string
-	Currency       string
-	Market         string
-	LotSize        int
-	ExpirationDate date.Date
-}
-
 func main() {
-	instrumentToSend := Instrument{
+	instrumentToSend := kafka_clients.Instrument{
 		ShortName: "BMW",
 		LongName:  "BMW Incorporation",
 		ISIN:      "BMW001",
@@ -70,7 +61,7 @@ func main() {
 	fmt.Printf("Message is stored in topic(%s)/partition(%d)/offset(%d)\n", *topic, partition, offset)
 }
 
-func convertToByteArray(instrument Instrument) []byte {
+func convertToByteArray(instrument kafka_clients.Instrument) []byte {
 	reqBodyBytes := new(bytes.Buffer)
 	err := json.NewEncoder(reqBodyBytes).Encode(instrument)
 
