@@ -18,17 +18,18 @@ var (
 
 func main() {
 	instrumentToSend := kafka_clients.Instrument{
+		Market:    "Xetra",
+		ISIN:      "BMW001",
+		Currency:  "SEK",
 		ShortName: "BMW",
 		LongName:  "BMW Incorporation",
-		ISIN:      "BMW001",
-		Currency:  "EUR",
-		Market:    "Eurex",
 		LotSize:   1,
 		ExpirationDate: date.Date{
 			Year:  2019,
-			Month: 12,
+			Month: 10,
 			Day:   31,
 		},
+		Status: "ACTIVE",
 	}
 
 	byteArray := convertToByteArray(instrumentToSend)

@@ -4,10 +4,13 @@ import (
 	"encoding/json"
 	"fmt"
 	"github.com/Shopify/sarama"
+	"github.com/gocql/gocql"
 	"github.com/ndjordjevic/kafka_clients"
 	"gopkg.in/alecthomas/kingpin.v2"
+	"log"
 	"os"
 	"os/signal"
+	"strconv"
 )
 
 var (
@@ -20,6 +23,14 @@ var (
 
 func main() {
 	kingpin.Parse()
+
+	// connect to Cassandra the cluster
+	cluster := gocql.NewCluster("127.0.0.1")
+	cluster.Keyspace = "go_sb"
+	session, _ := cluster.CreateSession()
+	defer session.Close()
+
+	// connect to Kafka
 	config := sarama.NewConfig()
 	config.Consumer.Return.Errors = true
 	brokers := *brokerList
@@ -52,7 +63,13 @@ func main() {
 				if err != nil {
 					return
 				}
-				fmt.Println(instrument.ShortName)
+
+				date := strconv.Itoa(int(instrument.ExpirationDate.Year)) + "-" + strconv.Itoa(int(instrument.ExpirationDate.Month)) + "-" + strconv.Itoa(int(instrument.ExpirationDate.Day))
+				insertSql := "INSERT INTO instruments (market, isin, currency, short_name, long_name, expiration_date, status) VALUES ('" + instrument.Market + "', '" + instrument.ISIN + "', '" + instrument.Currency + "', '" + instrument.ShortName + "', '" + instrument.LongName + "', '" + date + "', '" + instrument.Status + "')"
+				log.Println(insertSql)
+				if err := session.Query(insertSql).Exec(); err != nil {
+					log.Fatal(err)
+				}
 			case <-signals:
 				fmt.Println("Interrupt is detected")
 				doneCh <- struct{}{}
