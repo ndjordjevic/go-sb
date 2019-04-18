@@ -5,7 +5,7 @@ import (
 	"fmt"
 	"github.com/Shopify/sarama"
 	"github.com/gocql/gocql"
-	"github.com/ndjordjevic/kafka_clients"
+	"github.com/ndjordjevic/go-sb/internal/kafka_common"
 	"gopkg.in/alecthomas/kingpin.v2"
 	"log"
 	"os"
@@ -51,7 +51,7 @@ func main() {
 	signal.Notify(signals, os.Interrupt)
 	doneCh := make(chan struct{})
 	go func() {
-		var instrument kafka_clients.Instrument
+		var instrument kafka_common.Instrument
 		for {
 			select {
 			case err := <-consumer.Errors():

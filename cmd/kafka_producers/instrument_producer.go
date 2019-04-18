@@ -5,7 +5,7 @@ import (
 	"encoding/json"
 	"fmt"
 	"github.com/Shopify/sarama"
-	"github.com/ndjordjevic/kafka_clients"
+	"github.com/ndjordjevic/go-sb/internal/kafka_common"
 	"google.golang.org/genproto/googleapis/type/date"
 	"gopkg.in/alecthomas/kingpin.v2"
 )
@@ -17,7 +17,7 @@ var (
 )
 
 func main() {
-	instrumentToSend := kafka_clients.Instrument{
+	instrumentToSend := kafka_common.Instrument{
 		Market:    "Xetra",
 		ISIN:      "BMW001",
 		Currency:  "SEK",
@@ -62,7 +62,7 @@ func main() {
 	fmt.Printf("Message is stored in topic(%s)/partition(%d)/offset(%d)\n", *topic, partition, offset)
 }
 
-func convertToByteArray(instrument kafka_clients.Instrument) []byte {
+func convertToByteArray(instrument kafka_common.Instrument) []byte {
 	reqBodyBytes := new(bytes.Buffer)
 	err := json.NewEncoder(reqBodyBytes).Encode(instrument)
 

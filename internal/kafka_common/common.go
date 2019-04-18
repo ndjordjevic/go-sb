@@ -1,4 +1,4 @@
-package kafka_clients
+package kafka_common
 
 import "google.golang.org/genproto/googleapis/type/date"
 
