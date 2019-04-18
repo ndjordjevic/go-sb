@@ -4,30 +4,29 @@ import (
 	"fmt"
 	"github.com/Shopify/sarama"
 	"github.com/ndjordjevic/go-sb/internal/kafka_common"
-	"google.golang.org/genproto/googleapis/type/date"
 	"gopkg.in/alecthomas/kingpin.v2"
+	"log"
 )
 
 func main() {
-	instrumentToSend := kafka_common.Instrument{
-		Market:    "Xetra",
-		ISIN:      "BMW001",
-		Currency:  "SEK",
-		ShortName: "BMW",
-		LongName:  "BMW Incorporation",
-		LotSize:   1,
-		ExpirationDate: date.Date{
-			Year:  2019,
-			Month: 10,
-			Day:   31,
+	userToSend := kafka_common.User{
+		FirstName: "Nenad",
+		LastName:  "Dordevic",
+		Email:     "ndjordjevic@gmail.com",
+		Password:  "nelenele123",
+		Address:   "Djure Danicica 27",
+		City:      "Smederevo",
+		Country:   "Serbia",
+		Accounts: []kafka_common.Account{
+			{Currency: "USD", Balance: 100000},
+			{Currency: "EUR", Balance: 50000},
 		},
-		Status: "ACTIVE",
 	}
 
-	byteArray := kafka_common.ConvertToByteArray(instrumentToSend)
+	byteArray := kafka_common.ConvertToByteArray(userToSend)
 
-	fmt.Println(byteArray)
-	fmt.Println(string(byteArray))
+	log.Println(byteArray)
+	log.Println(string(byteArray))
 
 	kingpin.Parse()
 	config := sarama.NewConfig()
@@ -44,12 +43,12 @@ func main() {
 		}
 	}()
 	msg := &sarama.ProducerMessage{
-		Topic: *kafka_common.InstrumentTopic,
+		Topic: *kafka_common.UserTopic,
 		Value: sarama.ByteEncoder(byteArray),
 	}
 	partition, offset, err := producer.SendMessage(msg)
 	if err != nil {
 		panic(err)
 	}
-	fmt.Printf("Message is stored in topic(%s)/partition(%d)/offset(%d)\n", *kafka_common.InstrumentTopic, partition, offset)
+	fmt.Printf("Message is stored in topic(%s)/partition(%d)/offset(%d)\n", *kafka_common.UserTopic, partition, offset)
 }

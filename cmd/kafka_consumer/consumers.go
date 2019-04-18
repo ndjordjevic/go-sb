@@ -13,14 +13,6 @@ import (
 	"strconv"
 )
 
-var (
-	brokerList = kingpin.Flag("brokerList", "List of brokers to connect").Default("localhost:9092").Strings()
-	topic      = kingpin.Flag("topic", "Topic name").Default("instruments_topic").String()
-	//partition         = kingpin.Flag("partition", "Partition number").Default("0").String()
-	//offsetType        = kingpin.Flag("offsetType", "Offset Type (OffsetNewest | OffsetOldest)").Default("-1").Int()
-	messageCountStart = kingpin.Flag("messageCountStart", "Message counter start from:").Int()
-)
-
 func main() {
 	kingpin.Parse()
 
@@ -34,7 +26,7 @@ func main() {
 	// connect to Kafka
 	config := sarama.NewConfig()
 	config.Consumer.Return.Errors = true
-	brokers := *brokerList
+	brokers := *kafka_common.BrokerList
 	master, err := sarama.NewConsumer(brokers, config)
 	if err != nil {
 		panic(err)
@@ -46,7 +38,7 @@ func main() {
 	}()
 	log.Println("Waiting on new messages...")
 
-	consumer, err := master.ConsumePartition(*topic, 0, sarama.OffsetNewest)
+	consumer, err := master.ConsumePartition(*kafka_common.Topic, 0, sarama.OffsetNewest)
 	if err != nil {
 		panic(err)
 	}
@@ -60,7 +52,7 @@ func main() {
 			case err := <-consumer.Errors():
 				fmt.Println(err)
 			case msg := <-consumer.Messages():
-				*messageCountStart++
+				*kafka_common.MessageCountStart++
 				log.Println("Received messages", string(msg.Key), string(msg.Value))
 				err := json.Unmarshal(msg.Value, &instrument)
 				if err != nil {
@@ -81,5 +73,5 @@ func main() {
 		}
 	}()
 	<-doneCh
-	fmt.Println("Processed", *messageCountStart, "messages")
+	fmt.Println("Processed", *kafka_common.MessageCountStart, "messages")
 }
