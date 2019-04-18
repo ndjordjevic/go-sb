@@ -10,9 +10,10 @@ import (
 
 func main() {
 	userToSend := kafka_common.User{
+		Company:   "FIS",
+		Email:     "ndjordjevic@gmail.com",
 		FirstName: "Nenad",
 		LastName:  "Dordevic",
-		Email:     "ndjordjevic@gmail.com",
 		Password:  "nelenele123",
 		Address:   "Djure Danicica 27",
 		City:      "Smederevo",

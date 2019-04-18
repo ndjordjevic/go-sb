@@ -1,6 +1,9 @@
 // Start Apache Cassandra server
 apache-cassandra-3.11.4/bin/cassandra -f
 
+// Run cqlsh
+apache-cassandra-3.11.4/bin/cqlsh
+
 // Create Apache Cassandra keyspace (db)
 CREATE KEYSPACE go_sb WITH replication = {'class': 'SimpleStrategy', 'replication_factor': 1};
 
@@ -12,3 +15,18 @@ CREATE TABLE instruments(market text, isin text, currency text, short_name text,
 
 //Select from a Cassandra table
 SELECT * FROM instruments;
+
+// Create UDT
+CREATE TYPE account(currency text, balance double)
+
+// List tables in keyspaces
+DESC tables
+
+// List keyspaces
+DESC keyspaces
+
+// Details about all objects in keyspace
+DESC KEYSPACE go_sb
+
+// Create an user table
+CREATE TABLE users(company text, email text, first_name text, last_name text, password text, address text, city text, country text, accounts set<frozen<account>>, PRIMARY KEY (company, email));

@@ -38,10 +38,16 @@ func main() {
 	}()
 	log.Println("Waiting on new messages...")
 
-	consumer, err := master.ConsumePartition(*kafka_common.Topic, 0, sarama.OffsetNewest)
+	instrumentConsumer, err := master.ConsumePartition(*kafka_common.InstrumentTopic, 0, sarama.OffsetNewest)
 	if err != nil {
 		panic(err)
 	}
+
+	userConsumer, err := master.ConsumePartition(*kafka_common.UserTopic, 0, sarama.OffsetNewest)
+	if err != nil {
+		panic(err)
+	}
+
 	signals := make(chan os.Signal, 1)
 	signal.Notify(signals, os.Interrupt)
 	doneCh := make(chan struct{})
@@ -49,10 +55,10 @@ func main() {
 		var instrument kafka_common.Instrument
 		for {
 			select {
-			case err := <-consumer.Errors():
+			case err := <-instrumentConsumer.Errors():
 				fmt.Println(err)
-			case msg := <-consumer.Messages():
-				*kafka_common.MessageCountStart++
+			case msg := <-instrumentConsumer.Messages():
+				*kafka_common.InstrumentMessageCountStart++
 				log.Println("Received messages", string(msg.Key), string(msg.Value))
 				err := json.Unmarshal(msg.Value, &instrument)
 				if err != nil {
@@ -72,6 +78,45 @@ func main() {
 			}
 		}
 	}()
+
+	go func() {
+		var user kafka_common.User
+		for {
+			select {
+			case err := <-userConsumer.Errors():
+				fmt.Println(err)
+			case msg := <-userConsumer.Messages():
+				*kafka_common.UserMessageCountStart++
+				log.Println("Received messages", string(msg.Key), string(msg.Value))
+				err := json.Unmarshal(msg.Value, &user)
+				if err != nil {
+					return
+				}
+
+				var accounts = ""
+				for index, account := range user.Accounts {
+					accTemp := fmt.Sprintf("{currency: '%s', balance: %g}", account.Currency, account.Balance)
+					if index < len(user.Accounts)-1 {
+						accTemp += ", "
+					}
+					accounts += accTemp
+				}
+
+				userInsertSql := fmt.Sprintf("INSERT INTO users (company, email, first_name, last_name, password, address, city, country, accounts) VALUES ('%s', '%s', '%s', '%s', '%s', '%s', '%s', '%s', {%s})", user.Company, user.Email, user.FirstName, user.LastName, user.Password, user.Address, user.City, user.Country, accounts)
+
+				if err := session.Query(userInsertSql).Exec(); err != nil {
+					log.Fatal(err)
+				} else {
+					log.Println("User is inserted/updated in Cassandra")
+				}
+			case <-signals:
+				fmt.Println("Interrupt is detected")
+				doneCh <- struct{}{}
+			}
+		}
+	}()
+
 	<-doneCh
-	fmt.Println("Processed", *kafka_common.MessageCountStart, "messages")
+	fmt.Println("Processed", *kafka_common.InstrumentMessageCountStart, "instrument messages")
+	fmt.Println("Processed", *kafka_common.UserMessageCountStart, "user messages")
 }

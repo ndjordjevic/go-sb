@@ -9,11 +9,12 @@ import (
 )
 
 var (
-	BrokerList        = kingpin.Flag("brokerList", "List of brokers to connect").Default("localhost:9092").Strings()
-	InstrumentTopic   = kingpin.Flag("instrument-topic", "Instrument topic name").Default("instruments_topic").String()
-	UserTopic         = kingpin.Flag("user-topic", "User topic name").Default("users_topic").String()
-	MessageCountStart = kingpin.Flag("messageCountStart", "Message counter start from:").Int()
-	MaxRetry          = kingpin.Flag("maxRetry", "Retry limit").Default("5").Int()
+	BrokerList                  = kingpin.Flag("brokerList", "List of brokers to connect").Default("localhost:9092").Strings()
+	InstrumentTopic             = kingpin.Flag("instrument-topic", "Instrument topic name").Default("instruments_topic").String()
+	UserTopic                   = kingpin.Flag("user-topic", "User topic name").Default("users_topic").String()
+	InstrumentMessageCountStart = kingpin.Flag("instrumentMessageCountStart", "Instrument message counter start from:").Int()
+	UserMessageCountStart       = kingpin.Flag("userMessageCountStart", "User message counter start from:").Int()
+	MaxRetry                    = kingpin.Flag("maxRetry", "Retry limit").Default("5").Int()
 )
 
 type Instrument struct {
@@ -33,9 +34,10 @@ type Account struct {
 }
 
 type User struct {
+	Company   string
+	Email     string
 	FirstName string
 	LastName  string
-	Email     string
 	Password  string
 	Address   string
 	City      string
