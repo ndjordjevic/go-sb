@@ -1,0 +1,14 @@
+// Start Apache Cassandra server
+apache-cassandra-3.11.4/bin/cassandra -f
+
+// Create Apache Cassandra keyspace (db)
+CREATE KEYSPACE go_sb WITH replication = {'class': 'SimpleStrategy', 'replication_factor': 1};
+
+// Use a keyspace, run this to associate every following command with this keyspace
+USE go_sb;
+
+Create a instrument table
+CREATE TABLE instruments(market text, isin text, currency text, short_name text, long_name text, expiration_date date, status text, PRIMARY KEY (market, isin, currency));
+
+//Select from a Cassandra table
+SELECT * FROM instruments;
