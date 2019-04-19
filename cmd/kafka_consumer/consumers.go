@@ -16,7 +16,7 @@ import (
 func main() {
 	kingpin.Parse()
 
-	// connect to Cassandra the cluster
+	// connect to Cassandra cluster
 	cluster := gocql.NewCluster("127.0.0.1")
 	cluster.Keyspace = "go_sb"
 	session, _ := cluster.CreateSession()
