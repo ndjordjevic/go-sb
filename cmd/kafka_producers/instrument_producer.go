@@ -4,24 +4,19 @@ import (
 	"fmt"
 	"github.com/Shopify/sarama"
 	"github.com/ndjordjevic/go-sb/internal/kafka_common"
-	"google.golang.org/genproto/googleapis/type/date"
 	"gopkg.in/alecthomas/kingpin.v2"
+	"time"
 )
 
 func main() {
 	instrumentToSend := kafka_common.Instrument{
-		Market:    "Xetra",
-		ISIN:      "BMW001",
-		Currency:  "SEK",
-		ShortName: "BMW",
-		LongName:  "BMW Incorporation",
-		LotSize:   1,
-		ExpirationDate: date.Date{
-			Year:  2019,
-			Month: 10,
-			Day:   31,
-		},
-		Status: "ACTIVE",
+		Market:         "Xetra",
+		ISIN:           "APL001",
+		Currency:       "SEK",
+		ShortName:      "APL",
+		LongName:       "APPLE Systems",
+		ExpirationDate: time.Date(2019, time.December, 10, 0, 0, 0, 0, time.UTC),
+		Status:         "ACTIVE",
 	}
 
 	byteArray := kafka_common.ConvertToByteArray(instrumentToSend)

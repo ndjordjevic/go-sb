@@ -10,7 +10,6 @@ import (
 	"log"
 	"os"
 	"os/signal"
-	"strconv"
 )
 
 func main() {
@@ -65,7 +64,7 @@ func main() {
 					return
 				}
 
-				date := strconv.Itoa(int(instrument.ExpirationDate.Year)) + "-" + strconv.Itoa(int(instrument.ExpirationDate.Month)) + "-" + strconv.Itoa(int(instrument.ExpirationDate.Day))
+				date := instrument.ExpirationDate.Format("2006-01-02")
 				insertSql := "INSERT INTO instruments (market, isin, currency, short_name, long_name, expiration_date, status) VALUES ('" + instrument.Market + "', '" + instrument.ISIN + "', '" + instrument.Currency + "', '" + instrument.ShortName + "', '" + instrument.LongName + "', '" + date + "', '" + instrument.Status + "')"
 				if err := session.Query(insertSql).Exec(); err != nil {
 					log.Fatal(err)

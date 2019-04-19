@@ -4,8 +4,8 @@ import (
 	"bytes"
 	"encoding/json"
 	"fmt"
-	"google.golang.org/genproto/googleapis/type/date"
 	"gopkg.in/alecthomas/kingpin.v2"
+	"time"
 )
 
 var (
@@ -23,8 +23,7 @@ type Instrument struct {
 	Currency       string
 	ShortName      string
 	LongName       string
-	LotSize        int
-	ExpirationDate date.Date
+	ExpirationDate time.Time
 	Status         string
 }
 
