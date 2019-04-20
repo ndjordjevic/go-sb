@@ -1,11 +1,11 @@
 package main
 
 import (
-	"fmt"
 	"github.com/gin-gonic/gin"
 	"github.com/gocql/gocql"
 	"github.com/ndjordjevic/go-sb/internal/kafka_common"
 	"log"
+	"net/http"
 	"time"
 )
 
@@ -56,11 +56,13 @@ func fetchAllInstruments(c *gin.Context) {
 		m = map[string]interface{}{}
 	}
 
-	fmt.Println(instruments)
+	log.Println(instruments)
 
 	if err := iter.Close(); err != nil {
 		log.Fatal(err)
 	}
+
+	c.JSON(http.StatusOK, gin.H{"status": http.StatusOK, "data": instruments})
 }
 
 func fetchAllUsers(c *gin.Context) {
@@ -92,11 +94,13 @@ func fetchAllUsers(c *gin.Context) {
 		m = map[string]interface{}{}
 	}
 
-	fmt.Println(users)
+	log.Println(users)
 
 	if err := iter.Close(); err != nil {
 		log.Fatal(err)
 	}
+
+	c.JSON(http.StatusOK, gin.H{"status": http.StatusOK, "data": users})
 }
 
 func createOrder(c *gin.Context) {
