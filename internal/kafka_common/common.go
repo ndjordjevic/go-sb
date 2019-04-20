@@ -29,7 +29,7 @@ type Instrument struct {
 
 type Account struct {
 	Currency string
-	Balance  float32
+	Balance  float64
 }
 
 type User struct {

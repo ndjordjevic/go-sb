@@ -64,7 +64,39 @@ func fetchAllInstruments(c *gin.Context) {
 }
 
 func fetchAllUsers(c *gin.Context) {
+	var users []kafka_common.User
+	m := map[string]interface{}{}
 
+	iter := session.Query("SELECT company, email, first_name, last_name, password, address, city, country, accounts FROM users").Iter()
+	for iter.MapScan(m) {
+		user := kafka_common.User{
+			Company:   m["company"].(string),
+			Email:     m["email"].(string),
+			FirstName: m["first_name"].(string),
+			LastName:  m["last_name"].(string),
+			Password:  m["password"].(string),
+			Address:   m["address"].(string),
+			City:      m["city"].(string),
+			Country:   m["country"].(string),
+		}
+
+		for _, v := range m["accounts"].([]map[string]interface{}) {
+			account := kafka_common.Account{
+				Balance:  v["balance"].(float64),
+				Currency: v["currency"].(string),
+			}
+			user.Accounts = append(user.Accounts, account)
+		}
+		users = append(users, user)
+
+		m = map[string]interface{}{}
+	}
+
+	fmt.Println(users)
+
+	if err := iter.Close(); err != nil {
+		log.Fatal(err)
+	}
 }
 
 func createOrder(c *gin.Context) {

@@ -11,16 +11,16 @@ import (
 func main() {
 	userToSend := kafka_common.User{
 		Company:   "FIS",
-		Email:     "ndjordjevic@gmail.com",
-		FirstName: "Nenad",
-		LastName:  "Dordevic",
-		Password:  "nelenele123",
-		Address:   "Djure Danicica 27",
+		Email:     "ggg@gmail.com",
+		FirstName: "Gaga",
+		LastName:  "Dragic",
+		Password:  "gaga123",
+		Address:   "Save Simica 27",
 		City:      "Smederevo",
 		Country:   "Serbia",
 		Accounts: []kafka_common.Account{
-			{Currency: "USD", Balance: 100000},
-			{Currency: "EUR", Balance: 50000},
+			{Currency: "USD", Balance: 3000},
+			{Currency: "EUR", Balance: 1000},
 		},
 	}
 
