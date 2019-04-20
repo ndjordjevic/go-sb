@@ -11,7 +11,7 @@ CREATE KEYSPACE go_sb WITH replication = {'class': 'SimpleStrategy', 'replicatio
 USE go_sb;
 
 Create a instrument table
-CREATE TABLE instruments(market text, isin text, currency text, short_name text, long_name text, expiration_date date, status text, PRIMARY KEY (market, isin, currency));
+CREATE TABLE instruments(market text, isin text, currency text, instrument_key text, short_name text, long_name text, expiration_date date, status text, PRIMARY KEY (market, isin, currency));
 
 //Select from a Cassandra table
 SELECT * FROM instruments;
@@ -30,3 +30,6 @@ DESC KEYSPACE go_sb
 
 // Create an user table
 CREATE TABLE users(company text, email text, first_name text, last_name text, password text, address text, city text, country text, accounts set<frozen<account>>, PRIMARY KEY (company, email));
+
+// Create an order table
+CREATE TABLE orders(uuid uuid, email text, instrument_key text, currency text, size float, price float, status text, created timestamp, PRIMARY KEY (email, created)) WITH CLUSTERING ORDER BY (created DESC);;

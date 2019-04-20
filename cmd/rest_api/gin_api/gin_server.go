@@ -3,7 +3,7 @@ package main
 import (
 	"github.com/gin-gonic/gin"
 	"github.com/gocql/gocql"
-	"github.com/ndjordjevic/go-sb/internal/kafka_common"
+	"github.com/ndjordjevic/go-sb/internal/common"
 	"log"
 	"net/http"
 	"time"
@@ -33,17 +33,17 @@ func main() {
 	ordersV1 := router.Group("/api/v1/go-sb/orders/")
 	ordersV1.POST("/", createOrder)
 
-	_ = router.Run()
+	_ = router.Run(":8080")
 }
 
 func fetchAllInstruments(c *gin.Context) {
 
-	var instruments []kafka_common.Instrument
+	var instruments []common.Instrument
 	m := map[string]interface{}{}
 
 	iter := session.Query("SELECT market, isin, currency, short_name, long_name, status, expiration_date FROM instruments").Iter()
 	for iter.MapScan(m) {
-		instruments = append(instruments, kafka_common.Instrument{
+		instruments = append(instruments, common.Instrument{
 			Market:         m["market"].(string),
 			ISIN:           m["isin"].(string),
 			Currency:       m["currency"].(string),
@@ -66,12 +66,12 @@ func fetchAllInstruments(c *gin.Context) {
 }
 
 func fetchAllUsers(c *gin.Context) {
-	var users []kafka_common.User
+	var users []common.User
 	m := map[string]interface{}{}
 
 	iter := session.Query("SELECT company, email, first_name, last_name, password, address, city, country, accounts FROM users").Iter()
 	for iter.MapScan(m) {
-		user := kafka_common.User{
+		user := common.User{
 			Company:   m["company"].(string),
 			Email:     m["email"].(string),
 			FirstName: m["first_name"].(string),
@@ -83,7 +83,7 @@ func fetchAllUsers(c *gin.Context) {
 		}
 
 		for _, v := range m["accounts"].([]map[string]interface{}) {
-			account := kafka_common.Account{
+			account := common.Account{
 				Balance:  v["balance"].(float64),
 				Currency: v["currency"].(string),
 			}
@@ -94,8 +94,6 @@ func fetchAllUsers(c *gin.Context) {
 		m = map[string]interface{}{}
 	}
 
-	log.Println(users)
-
 	if err := iter.Close(); err != nil {
 		log.Fatal(err)
 	}
@@ -104,5 +102,20 @@ func fetchAllUsers(c *gin.Context) {
 }
 
 func createOrder(c *gin.Context) {
+	var order common.Order
 
+	if err := c.BindJSON(&order); err != nil {
+		log.Fatal(err)
+	}
+
+	order.Created = time.Now()
+	order.UUID = gocql.TimeUUID()
+
+	// write order to Cassandra
+	if err := session.Query(`INSERT INTO orders (uuid, email, instrument_key, currency, size, price, status, created) VALUES (?, ?, ?, ?, ?, ?, ?, ?)`,
+		order.UUID, order.Email, order.InstrumentKey, order.Currency, order.Size, order.Price, order.Status, order.Created).Exec(); err != nil {
+		log.Fatal(err)
+	}
+
+	c.JSON(http.StatusCreated, gin.H{"status": http.StatusCreated, "message": "Order is created successfully!", "resourceId": order.UUID})
 }

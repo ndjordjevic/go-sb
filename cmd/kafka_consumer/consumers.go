@@ -5,7 +5,7 @@ import (
 	"fmt"
 	"github.com/Shopify/sarama"
 	"github.com/gocql/gocql"
-	"github.com/ndjordjevic/go-sb/internal/kafka_common"
+	"github.com/ndjordjevic/go-sb/internal/common"
 	"gopkg.in/alecthomas/kingpin.v2"
 	"log"
 	"os"
@@ -25,7 +25,7 @@ func main() {
 	// connect to Kafka
 	config := sarama.NewConfig()
 	config.Consumer.Return.Errors = true
-	brokers := *kafka_common.BrokerList
+	brokers := *common.BrokerList
 	master, err := sarama.NewConsumer(brokers, config)
 	if err != nil {
 		panic(err)
@@ -37,12 +37,12 @@ func main() {
 	}()
 	log.Println("Waiting on new messages...")
 
-	instrumentConsumer, err := master.ConsumePartition(*kafka_common.InstrumentTopic, 0, sarama.OffsetNewest)
+	instrumentConsumer, err := master.ConsumePartition(*common.InstrumentTopic, 0, sarama.OffsetNewest)
 	if err != nil {
 		panic(err)
 	}
 
-	userConsumer, err := master.ConsumePartition(*kafka_common.UserTopic, 0, sarama.OffsetNewest)
+	userConsumer, err := master.ConsumePartition(*common.UserTopic, 0, sarama.OffsetNewest)
 	if err != nil {
 		panic(err)
 	}
@@ -51,13 +51,13 @@ func main() {
 	signal.Notify(signals, os.Interrupt)
 	doneCh := make(chan struct{})
 	go func() {
-		var instrument kafka_common.Instrument
+		var instrument common.Instrument
 		for {
 			select {
 			case err := <-instrumentConsumer.Errors():
 				fmt.Println(err)
 			case msg := <-instrumentConsumer.Messages():
-				*kafka_common.InstrumentMessageCountStart++
+				*common.InstrumentMessageCountStart++
 				log.Println("Received messages", string(msg.Key), string(msg.Value))
 				err := json.Unmarshal(msg.Value, &instrument)
 				if err != nil {
@@ -65,7 +65,7 @@ func main() {
 				}
 
 				date := instrument.ExpirationDate.Format("2006-01-02")
-				insertSql := "INSERT INTO instruments (market, isin, currency, short_name, long_name, expiration_date, status) VALUES ('" + instrument.Market + "', '" + instrument.ISIN + "', '" + instrument.Currency + "', '" + instrument.ShortName + "', '" + instrument.LongName + "', '" + date + "', '" + instrument.Status + "')"
+				insertSql := "INSERT INTO instruments (market, isin, currency, instrument_key, short_name, long_name, expiration_date, status) VALUES ('" + instrument.Market + "', '" + instrument.ISIN + "', '" + instrument.Currency + "', '" + instrument.InstrumentKey + "', '" + instrument.ShortName + "', '" + instrument.LongName + "', '" + date + "', '" + instrument.Status + "')"
 				if err := session.Query(insertSql).Exec(); err != nil {
 					log.Fatal(err)
 				} else {
@@ -79,13 +79,13 @@ func main() {
 	}()
 
 	go func() {
-		var user kafka_common.User
+		var user common.User
 		for {
 			select {
 			case err := <-userConsumer.Errors():
 				fmt.Println(err)
 			case msg := <-userConsumer.Messages():
-				*kafka_common.UserMessageCountStart++
+				*common.UserMessageCountStart++
 				log.Println("Received messages", string(msg.Key), string(msg.Value))
 				err := json.Unmarshal(msg.Value, &user)
 				if err != nil {
@@ -116,6 +116,6 @@ func main() {
 	}()
 
 	<-doneCh
-	fmt.Println("Processed", *kafka_common.InstrumentMessageCountStart, "instrument messages")
-	fmt.Println("Processed", *kafka_common.UserMessageCountStart, "user messages")
+	fmt.Println("Processed", *common.InstrumentMessageCountStart, "instrument messages")
+	fmt.Println("Processed", *common.UserMessageCountStart, "user messages")
 }

@@ -3,13 +3,13 @@ package main
 import (
 	"fmt"
 	"github.com/Shopify/sarama"
-	"github.com/ndjordjevic/go-sb/internal/kafka_common"
+	"github.com/ndjordjevic/go-sb/internal/common"
 	"gopkg.in/alecthomas/kingpin.v2"
 	"log"
 )
 
 func main() {
-	userToSend := kafka_common.User{
+	userToSend := common.User{
 		Company:   "FIS",
 		Email:     "ggg@gmail.com",
 		FirstName: "Gaga",
@@ -18,13 +18,13 @@ func main() {
 		Address:   "Save Simica 27",
 		City:      "Smederevo",
 		Country:   "Serbia",
-		Accounts: []kafka_common.Account{
+		Accounts: []common.Account{
 			{Currency: "USD", Balance: 3000},
 			{Currency: "EUR", Balance: 1000},
 		},
 	}
 
-	byteArray := kafka_common.ConvertToByteArray(userToSend)
+	byteArray := common.ConvertToByteArray(userToSend)
 
 	log.Println(byteArray)
 	log.Println(string(byteArray))
@@ -32,9 +32,9 @@ func main() {
 	kingpin.Parse()
 	config := sarama.NewConfig()
 	config.Producer.RequiredAcks = sarama.WaitForAll
-	config.Producer.Retry.Max = *kafka_common.MaxRetry
+	config.Producer.Retry.Max = *common.MaxRetry
 	config.Producer.Return.Successes = true
-	producer, err := sarama.NewSyncProducer(*kafka_common.BrokerList, config)
+	producer, err := sarama.NewSyncProducer(*common.BrokerList, config)
 	if err != nil {
 		panic(err)
 	}
@@ -44,12 +44,12 @@ func main() {
 		}
 	}()
 	msg := &sarama.ProducerMessage{
-		Topic: *kafka_common.UserTopic,
+		Topic: *common.UserTopic,
 		Value: sarama.ByteEncoder(byteArray),
 	}
 	partition, offset, err := producer.SendMessage(msg)
 	if err != nil {
 		panic(err)
 	}
-	fmt.Printf("Message is stored in topic(%s)/partition(%d)/offset(%d)\n", *kafka_common.UserTopic, partition, offset)
+	fmt.Printf("Message is stored in topic(%s)/partition(%d)/offset(%d)\n", *common.UserTopic, partition, offset)
 }

@@ -1,9 +1,10 @@
-package kafka_common
+package common
 
 import (
 	"bytes"
 	"encoding/json"
 	"fmt"
+	"github.com/gocql/gocql"
 	"gopkg.in/alecthomas/kingpin.v2"
 	"time"
 )
@@ -21,6 +22,7 @@ type Instrument struct {
 	Market         string
 	ISIN           string
 	Currency       string
+	InstrumentKey  string
 	ShortName      string
 	LongName       string
 	ExpirationDate time.Time
@@ -42,6 +44,17 @@ type User struct {
 	City      string
 	Country   string
 	Accounts  []Account
+}
+
+type Order struct {
+	UUID          gocql.UUID
+	Email         string
+	InstrumentKey string
+	Currency      string
+	Size          float32
+	Price         float32
+	Status        string
+	Created       time.Time
 }
 
 func ConvertToByteArray(object interface{}) []byte {
