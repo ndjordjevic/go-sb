@@ -53,29 +53,29 @@
 </template>
 
 <script>
-  // @ is an alias to /src
-  // import HelloWorld from '@/components/HelloWorld.vue'
+// @ is an alias to /src
+// import HelloWorld from '@/components/HelloWorld.vue'
 
-  export default {
-    name: 'order',
-    components: {
-      // HelloWorld
-    },
-    data() {
-      return {
-        order: {
-          email: '',
-          instrumentKey: '',
-          currency: '',
-          size: '',
-          price: ''
-        }
-      }
-    },
-    methods: {
-      createNewOrder() {
-        console.log(this.order)
+export default {
+  name: 'order',
+  components: {
+    // HelloWorld
+  },
+  data () {
+    return {
+      order: {
+        email: '',
+        instrumentKey: '',
+        currency: '',
+        size: '',
+        price: ''
       }
     }
+  },
+  methods: {
+    createNewOrder () {
+      console.log(this.order)
+    }
   }
+}
 </script>
