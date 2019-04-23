@@ -29,13 +29,13 @@
               <div class="form-group row">
                 <label class="col-lg-4 col-form-label form-control-label">Size</label>
                 <div class="col-lg-8">
-                  <input class="form-control" placeholder="Size" type="number" v-model="order.size">
+                  <input class="form-control" placeholder="Size" type="text" v-model.number="order.size">
                 </div>
               </div>
               <div class="form-group row">
                 <label class="col-lg-4 col-form-label form-control-label">Price</label>
                 <div class="col-lg-8">
-                  <input class="form-control" placeholder="Price" type="number" v-model="order.price">
+                  <input class="form-control" placeholder="Price" type="text" v-model.number="order.price">
                 </div>
               </div>
               <div class="form-group row">
@@ -67,14 +67,19 @@ export default {
         email: '',
         instrumentKey: '',
         currency: '',
-        size: '',
-        price: ''
+        size: 0,
+        price: 0
       }
     }
   },
   methods: {
     createNewOrder () {
       console.log(this.order)
+      this.$http.post('/orders/', this.order).then(({ data }) => {
+        console.log(data)
+      }).catch((error) => {
+        console.log('Error: ', error)
+      })
     }
   }
 }

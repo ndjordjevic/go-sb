@@ -1,6 +1,7 @@
 package main
 
 import (
+	"github.com/gin-contrib/cors"
 	"github.com/gin-gonic/gin"
 	"github.com/gocql/gocql"
 	"github.com/ndjordjevic/go-sb/internal/common"
@@ -24,6 +25,23 @@ func main() {
 
 	router := gin.Default()
 
+	// CORS for https://foo.com and https://github.com origins, allowing:
+	// - PUT and PATCH methods
+	// - Origin header
+	// - Credentials share
+	// - Preflight requests cached for 12 hours
+	router.Use(cors.New(cors.Config{
+		AllowOrigins:     []string{"http://localhost:8080"},
+		AllowMethods:     []string{"PUT", "PATCH", "POST", "OPTIONS"},
+		AllowHeaders:     []string{"Origin", "Content-Type"},
+		ExposeHeaders:    []string{"Content-Length"},
+		AllowCredentials: true,
+		//AllowOriginFunc: func(origin string) bool {
+		//	return origin == "http://localhost:8010"
+		//},
+		MaxAge: 12 * time.Hour,
+	}))
+
 	instrumentsV1 := router.Group("/api/v1/go-sb/instruments/")
 	instrumentsV1.GET("/", fetchAllInstruments)
 
@@ -33,7 +51,7 @@ func main() {
 	ordersV1 := router.Group("/api/v1/go-sb/orders/")
 	ordersV1.POST("/", createOrder)
 
-	_ = router.Run(":8080")
+	_ = router.Run(":8010")
 }
 
 func fetchAllInstruments(c *gin.Context) {
@@ -110,6 +128,9 @@ func createOrder(c *gin.Context) {
 
 	order.Created = time.Now()
 	order.UUID = gocql.TimeUUID()
+
+	// Set to ACTIVE if it's valid
+	order.Status = "ACTIVE"
 
 	// write order to Cassandra
 	if err := session.Query(`INSERT INTO orders (uuid, email, instrument_key, currency, size, price, status, created) VALUES (?, ?, ?, ?, ?, ?, ?, ?)`,
