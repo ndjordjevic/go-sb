@@ -74,7 +74,6 @@ export default {
   },
   methods: {
     createNewOrder () {
-      console.log(this.order)
       this.$http.post('/orders/', this.order).then(({ data }) => {
         console.log(data)
       }).catch((error) => {
