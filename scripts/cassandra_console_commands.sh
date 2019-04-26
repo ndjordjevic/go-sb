@@ -1,35 +1,37 @@
-// Start Apache Cassandra server
+#!/bin/bash
+
+# Start Apache Cassandra server
 apache-cassandra-3.11.4/bin/cassandra -f
 
-// Run cqlsh
+# Run cqlsh
 apache-cassandra-3.11.4/bin/cqlsh
 
-// Create Apache Cassandra keyspace (db)
+# Create Apache Cassandra keyspace (db)
 CREATE KEYSPACE go_sb WITH replication = {'class': 'SimpleStrategy', 'replication_factor': 1};
 
-// Use a keyspace, run this to associate every following command with this keyspace
+# Use a keyspace, run this to associate every following command with this keyspace
 USE go_sb;
 
 Create a instrument table
 CREATE TABLE instruments(market text, isin text, currency text, instrument_key text, short_name text, long_name text, expiration_date date, status text, PRIMARY KEY (market, isin, currency));
 
-//Select from a Cassandra table
+#Select from a Cassandra table
 SELECT * FROM instruments;
 
-// Create UDT
+# Create UDT
 CREATE TYPE account(currency text, balance double)
 
-// List tables in keyspaces
+# List tables in keyspaces
 DESC tables
 
-// List keyspaces
+# List keyspaces
 DESC keyspaces
 
-// Details about all objects in keyspace
+# Details about all objects in keyspace
 DESC KEYSPACE go_sb
 
-// Create an user table
+# Create an user table
 CREATE TABLE users(company text, email text, first_name text, last_name text, password text, address text, city text, country text, accounts set<frozen<account>>, PRIMARY KEY (company, email));
 
-// Create an order table
+# Create an order table
 CREATE TABLE orders(uuid uuid, email text, instrument_key text, currency text, size float, price float, status text, created timestamp, PRIMARY KEY (email, created)) WITH CLUSTERING ORDER BY (created DESC);;
