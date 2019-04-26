@@ -1,16 +1,20 @@
 package main
 
 import (
+	"context"
 	"github.com/gin-contrib/cors"
 	"github.com/gin-gonic/gin"
 	"github.com/gocql/gocql"
+	orderpb "github.com/ndjordjevic/go-sb/api"
 	"github.com/ndjordjevic/go-sb/internal/common"
+	"google.golang.org/grpc"
 	"log"
 	"net/http"
 	"time"
 )
 
 var session *gocql.Session
+var orderHandlerServiceClient orderpb.OrderHandlerServiceClient
 
 func init() {
 	// connect to Cassandra cluster
@@ -23,6 +27,23 @@ func init() {
 func main() {
 	defer session.Close()
 
+	// grpc client connection
+	clientConn, err := grpc.Dial("localhost:50051", grpc.WithInsecure())
+
+	if err != nil {
+		log.Fatal(err)
+	}
+
+	defer func() {
+		if err := clientConn.Close(); err != nil {
+			log.Fatal(err)
+		}
+	}()
+
+	// grpc service client
+	orderHandlerServiceClient = orderpb.NewOrderHandlerServiceClient(clientConn)
+
+	// gin gonic routes
 	router := gin.Default()
 
 	// CORS for https://foo.com and https://github.com origins, allowing:
@@ -126,17 +147,36 @@ func createOrder(c *gin.Context) {
 		log.Fatal(err)
 	}
 
-	order.Created = time.Now()
-	order.UUID = gocql.TimeUUID()
+	//order.Created = time.Now()
+	//order.UUID = gocql.TimeUUID()
+	//
+	//// Set to ACTIVE if it's valid
+	//order.Status = "ACTIVE"
+	//
+	//// write order to Cassandra
+	//if err := session.Query(`INSERT INTO orders (uuid, email, instrument_key, currency, size, price, status, created) VALUES (?, ?, ?, ?, ?, ?, ?, ?)`,
+	//	order.UUID, order.Email, order.InstrumentKey, order.Currency, order.Size, order.Price, order.Status, order.Created).Exec(); err != nil {
+	//	log.Fatal(err)
+	//}
 
-	// Set to ACTIVE if it's valid
-	order.Status = "ACTIVE"
+	req := &orderpb.HandleOrderRequest{
+		Order: &orderpb.Order{
+			Email:         order.Email,
+			InstrumentKey: order.InstrumentKey,
+			Currency:      order.Currency,
+			Size:          order.Size,
+			Price:         order.Price,
+		},
+		Action: orderpb.HandleOrderRequest_NEW,
+	}
 
-	// write order to Cassandra
-	if err := session.Query(`INSERT INTO orders (uuid, email, instrument_key, currency, size, price, status, created) VALUES (?, ?, ?, ?, ?, ?, ?, ?)`,
-		order.UUID, order.Email, order.InstrumentKey, order.Currency, order.Size, order.Price, order.Status, order.Created).Exec(); err != nil {
+	res, err := orderHandlerServiceClient.NewOrder(context.Background(), req)
+
+	if err != nil {
 		log.Fatal(err)
 	}
+
+	log.Println(res.Response.String())
 
 	c.JSON(http.StatusCreated, gin.H{"status": http.StatusCreated, "message": "Order is created successfully!", "resourceId": order.UUID})
 }

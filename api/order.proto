@@ -1,0 +1,47 @@
+syntax = "proto3";
+
+package order;
+
+import "google/protobuf/timestamp.proto";
+
+option go_package = "orderpb";
+
+message Order {
+    string UUID = 1;
+    string email = 2;
+    string instrument_key = 3;
+    string currency = 4;
+    float size = 5;
+    float price = 6;
+    google.protobuf.Timestamp created = 7;
+    enum Status {
+        ACTIVE = 0;
+        DELETED = 1;
+        FILLED = 2;
+    }
+    Status status = 8;
+}
+
+message HandleOrderRequest {
+    Order order = 1;
+    enum Action {
+        NEW = 0;
+        MODIFY = 1;
+        DELETE = 2;
+    }
+    Action action = 2;
+}
+
+message HandleOrderResponse {
+    enum Response {
+        OK = 0;
+        ERROR = 1;
+    }
+    Response response = 1;
+    string error_message = 2;
+}
+
+service OrderHandlerService {
+    rpc HandleOrder (HandleOrderRequest) returns (HandleOrderResponse) {
+    };
+}
