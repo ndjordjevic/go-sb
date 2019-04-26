@@ -170,13 +170,22 @@ func createOrder(c *gin.Context) {
 		Action: orderpb.HandleOrderRequest_NEW,
 	}
 
-	res, err := orderHandlerServiceClient.NewOrder(context.Background(), req)
+	res, err := orderHandlerServiceClient.HandleOrder(context.Background(), req)
 
 	if err != nil {
 		log.Fatal(err)
 	}
 
-	log.Println(res.Response.String())
+	var message string
+	var statusCode int
 
-	c.JSON(http.StatusCreated, gin.H{"status": http.StatusCreated, "message": "Order is created successfully!", "resourceId": order.UUID})
+	if res.Response == orderpb.HandleOrderResponse_OK {
+		message = "Order is created successfully"
+		statusCode = http.StatusCreated
+	} else {
+		message = res.ErrorMessage
+		statusCode = http.StatusNotAcceptable
+	}
+
+	c.JSON(statusCode, gin.H{"status": statusCode, "message": message})
 }

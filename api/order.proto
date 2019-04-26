@@ -41,7 +41,23 @@ message HandleOrderResponse {
     string error_message = 2;
 }
 
+message ValidateOrderRequest {
+    Order order = 1;
+}
+
+message ValidateOrderResponse {
+    bool valid = 1;
+    string error_message = 2;
+}
+
 service OrderHandlerService {
     rpc HandleOrder (HandleOrderRequest) returns (HandleOrderResponse) {
     };
+
+}
+
+service ValidateOrderService {
+    rpc ValidateOrder (ValidateOrderRequest) returns (ValidateOrderResponse) {
+    };
+
 }
