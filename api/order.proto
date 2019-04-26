@@ -56,7 +56,7 @@ service OrderHandlerService {
 
 }
 
-service ValidateOrderService {
+service OrderValidatorService {
     rpc ValidateOrder (ValidateOrderRequest) returns (ValidateOrderResponse) {
     };
 

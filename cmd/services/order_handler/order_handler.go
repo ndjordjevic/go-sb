@@ -46,7 +46,7 @@ func (*server) HandleOrder(ctx context.Context, req *orderpb.HandleOrderRequest)
 	}()
 
 	// grpc service client
-	validateOrderServiceClient := orderpb.NewValidateOrderServiceClient(clientConn)
+	validateOrderServiceClient := orderpb.NewOrderValidatorServiceClient(clientConn)
 	resValidateOrder, err := validateOrderServiceClient.ValidateOrder(context.Background(), reqValidateOrder)
 	if err != nil {
 		log.Fatal(err)

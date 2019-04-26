@@ -40,7 +40,7 @@ func main() {
 
 	s := grpc.NewServer()
 
-	orderpb.RegisterValidateOrderServiceServer(s, &validateOrderServer{})
+	orderpb.RegisterOrderValidatorServiceServer(s, &validateOrderServer{})
 
 	if err := s.Serve(lis); err != nil {
 		log.Fatal(err)
