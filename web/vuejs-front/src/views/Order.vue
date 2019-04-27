@@ -55,6 +55,7 @@
 <script>
 // @ is an alias to /src
 // import HelloWorld from '@/components/HelloWorld.vue'
+import Vue from 'vue'
 
 export default {
   name: 'order',
@@ -75,9 +76,19 @@ export default {
   methods: {
     createNewOrder () {
       this.$http.post('/orders/', this.order).then(({ data }) => {
-        console.log(data)
+        Vue.notify({
+          group: 'order',
+          title: 'Order',
+          text: data.message,
+          type: 'info'
+        })
       }).catch((error) => {
-        console.log('Error: ', error)
+        Vue.notify({
+          group: 'order',
+          title: 'Order',
+          text: error.response.data.message,
+          type: 'error'
+        })
       })
     }
   }

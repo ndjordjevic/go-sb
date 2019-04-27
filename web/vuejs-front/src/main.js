@@ -5,9 +5,11 @@ import store from './store'
 import 'bootstrap/dist/css/bootstrap.css'
 import axios from 'axios'
 import VueAxios from 'vue-axios'
+import Notifications from 'vue-notification'
 
 Vue.config.productionTip = false
 Vue.use(VueAxios, axios)
+Vue.use(Notifications)
 
 axios.defaults.baseURL = 'http://localhost:8010/api/v1/go-sb'
 axios.defaults.headers.common.Accept = 'application/json'
