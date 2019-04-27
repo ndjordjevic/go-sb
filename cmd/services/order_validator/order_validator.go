@@ -2,20 +2,30 @@ package main
 
 import (
 	"context"
+	"github.com/gocql/gocql"
 	orderpb "github.com/ndjordjevic/go-sb/api"
 	"google.golang.org/grpc"
 	"log"
-	"math/rand"
 	"net"
 )
 
 type validateOrderServer struct{}
 
+var session *gocql.Session
+
+func init() {
+	// connect to Cassandra cluster
+	cluster := gocql.NewCluster("127.0.0.1")
+	cluster.Keyspace = "go_sb"
+	session, _ = cluster.CreateSession()
+	log.Println("Connected to Cassandra.")
+}
+
 func (*validateOrderServer) ValidateOrder(ctx context.Context, req *orderpb.ValidateOrderRequest) (*orderpb.ValidateOrderResponse, error) {
 	log.Println("New request to validate", req.Order)
 
 	res := &orderpb.ValidateOrderResponse{
-		Valid: randomBool(),
+		Valid: checkOrder(req),
 	}
 
 	if res.Valid == false {
@@ -26,8 +36,20 @@ func (*validateOrderServer) ValidateOrder(ctx context.Context, req *orderpb.Vali
 
 }
 
-func randomBool() bool {
-	return rand.Float32() < 0.5
+func checkOrder(req *orderpb.ValidateOrderRequest) bool {
+	var accounts []map[string]interface{}
+	if err := session.Query("SELECT accounts FROM users WHERE email = ? ALLOW FILTERING", req.Order.Email).Scan(&accounts); err != nil {
+		log.Println(err)
+	}
+	var valid = false
+	for _, v := range accounts {
+		if v["currency"].(string) == req.Order.Currency {
+			if float64(req.Order.Size*req.Order.Price) < v["balance"].(float64) {
+				valid = true
+			}
+		}
+	}
+	return valid
 }
 
 func main() {
