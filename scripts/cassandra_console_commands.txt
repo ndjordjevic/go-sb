@@ -1,5 +1,3 @@
-#!/bin/bash
-
 # Start Apache Cassandra server
 apache-cassandra-3.11.4/bin/cassandra -f
 
