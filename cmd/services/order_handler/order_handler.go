@@ -115,7 +115,7 @@ func writeOrderToESAsync(order common.Order) {
 	log.Printf("Elasticsearch returned with code %d and version %s\n", code, info.Version.Number)
 
 	// Use the IndexExists service to check if a specified index exists.
-	exists, err := client.IndexExists("orders").Do(ctx)
+	exists, err := client.IndexExists("order").Do(ctx)
 	if err != nil {
 		// Handle error
 		panic(err)
@@ -123,7 +123,7 @@ func writeOrderToESAsync(order common.Order) {
 
 	if !exists {
 		//Create a new index.
-		createIndex, err := client.CreateIndex("orders").Body(mapping).Do(ctx)
+		createIndex, err := client.CreateIndex("order").Body(mapping).Do(ctx)
 		if err != nil {
 			// Handle error
 			panic(err)
@@ -134,7 +134,7 @@ func writeOrderToESAsync(order common.Order) {
 	}
 
 	put1, err := client.Index().
-		Index("orders").
+		Index("order").
 		Id(order.UUID.String()).
 		BodyJson(order).
 		Do(ctx)

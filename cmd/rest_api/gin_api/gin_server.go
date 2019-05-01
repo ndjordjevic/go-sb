@@ -8,8 +8,10 @@ import (
 	orderpb "github.com/ndjordjevic/go-sb/api"
 	"github.com/ndjordjevic/go-sb/internal/common"
 	"google.golang.org/grpc"
+	"gopkg.in/olivere/elastic.v7"
 	"log"
 	"net/http"
+	"reflect"
 	"time"
 )
 
@@ -71,6 +73,8 @@ func main() {
 
 	ordersV1 := router.Group("/api/v1/go-sb/orders/")
 	ordersV1.POST("/", createOrder)
+
+	router.GET("/api/v1/go-sb/orders/search", searchOrders)
 
 	_ = router.Run(":8010")
 }
@@ -176,4 +180,40 @@ func createOrder(c *gin.Context) {
 	}
 
 	c.JSON(statusCode, gin.H{"status": statusCode, "message": message})
+}
+
+func searchOrders(c *gin.Context) {
+	searchTerm, _ := c.GetQuery("q")
+
+	ctx := context.Background()
+
+	client, err := elastic.NewClient()
+	if err != nil {
+		panic(err)
+	}
+
+	termQuery := elastic.NewQueryStringQuery(searchTerm)
+	searchResult, err := client.Search().
+		Index("order").
+		Query(termQuery).
+		Sort("Created", false).
+		//From(0).Size(10).
+		Pretty(true).
+		Do(ctx)
+	if err != nil {
+		panic(err)
+	}
+
+	//fmt.Printf("Query took %d milliseconds\n", searchResult.TookInMillis)
+
+	var orders []common.Order
+
+	var order common.Order
+	for _, item := range searchResult.Each(reflect.TypeOf(order)) {
+		if order, ok := item.(common.Order); ok {
+			orders = append(orders, order)
+		}
+	}
+
+	c.JSON(http.StatusOK, gin.H{"status": http.StatusOK, "data": orders})
 }
