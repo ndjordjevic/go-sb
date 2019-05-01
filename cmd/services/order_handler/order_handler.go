@@ -82,7 +82,13 @@ func (*server) HandleOrder(ctx context.Context, req *orderpb.HandleOrderRequest)
 	if resValidateOrder.Valid {
 		res.Response = orderpb.HandleOrderResponse_OK
 
+		order.Created = time.Now()
+		order.UUID = gocql.TimeUUID()
+		order.Status = "ACTIVE"
+
 		writeOrderToDBAsync(order)
+		writeOrderToESAsync(order)
+
 		log.Println("Order's valid")
 	} else {
 		log.Println(resValidateOrder.GetErrorMessage())
@@ -94,56 +100,58 @@ func (*server) HandleOrder(ctx context.Context, req *orderpb.HandleOrderRequest)
 }
 
 func writeOrderToESAsync(order common.Order) {
-	// Starting with elastic.v5, you must pass a context to execute each service
-	ctx := context.Background()
+	go func() {
+		// Starting with elastic.v5, you must pass a context to execute each service
+		ctx := context.Background()
 
-	// Obtain a client and connect to the default Elasticsearch installation
-	// on 127.0.0.1:9200. Of course you can configure your client to connect
-	// to other hosts and configure it in various other ways.
-	client, err := elastic.NewClient()
-	if err != nil {
-		// Handle error
-		panic(err)
-	}
-
-	// Ping the Elasticsearch server to get e.g. the version number
-	info, code, err := client.Ping("http://127.0.0.1:9200").Do(ctx)
-	if err != nil {
-		// Handle error
-		panic(err)
-	}
-	log.Printf("Elasticsearch returned with code %d and version %s\n", code, info.Version.Number)
-
-	// Use the IndexExists service to check if a specified index exists.
-	exists, err := client.IndexExists("order").Do(ctx)
-	if err != nil {
-		// Handle error
-		panic(err)
-	}
-
-	if !exists {
-		//Create a new index.
-		createIndex, err := client.CreateIndex("order").Body(mapping).Do(ctx)
+		// Obtain a client and connect to the default Elasticsearch installation
+		// on 127.0.0.1:9200. Of course you can configure your client to connect
+		// to other hosts and configure it in various other ways.
+		client, err := elastic.NewClient()
 		if err != nil {
 			// Handle error
 			panic(err)
 		}
-		if !createIndex.Acknowledged {
-			log.Println("Not Acknowledged")
+
+		// Ping the Elasticsearch server to get e.g. the version number
+		info, code, err := client.Ping("http://127.0.0.1:9200").Do(ctx)
+		if err != nil {
+			// Handle error
+			panic(err)
 		}
-	}
+		log.Printf("Elasticsearch returned with code %d and version %s\n", code, info.Version.Number)
 
-	put1, err := client.Index().
-		Index("order").
-		Id(order.UUID.String()).
-		BodyJson(order).
-		Do(ctx)
-	if err != nil {
-		// Handle error
-		panic(err)
-	}
+		// Use the IndexExists service to check if a specified index exists.
+		exists, err := client.IndexExists("order").Do(ctx)
+		if err != nil {
+			// Handle error
+			panic(err)
+		}
 
-	fmt.Printf("Indexed orders %s to index %s\n", put1.Id, put1.Index)
+		if !exists {
+			//Create a new index.
+			createIndex, err := client.CreateIndex("order").Body(mapping).Do(ctx)
+			if err != nil {
+				// Handle error
+				panic(err)
+			}
+			if !createIndex.Acknowledged {
+				log.Println("Not Acknowledged")
+			}
+		}
+
+		put1, err := client.Index().
+			Index("order").
+			Id(order.UUID.String()).
+			BodyJson(order).
+			Do(ctx)
+		if err != nil {
+			// Handle error
+			panic(err)
+		}
+
+		fmt.Printf("Indexed orders %s to index %s\n", put1.Id, put1.Index)
+	}()
 }
 
 func callOrderValidatorService(order common.Order) *orderpb.ValidateOrderResponse {
@@ -182,17 +190,12 @@ func callOrderValidatorService(order common.Order) *orderpb.ValidateOrderRespons
 
 func writeOrderToDBAsync(order common.Order) {
 	go func() {
-		order.Created = time.Now()
-		order.UUID = gocql.TimeUUID()
-		order.Status = "ACTIVE"
 
 		// write order to Cassandra
 		if err := session.Query(`INSERT INTO orders (uuid, email, instrument_key, currency, size, price, status, created) VALUES (?, ?, ?, ?, ?, ?, ?, ?)`,
 			order.UUID, order.Email, order.InstrumentKey, order.Currency, order.Size, order.Price, order.Status, order.Created).Exec(); err != nil {
 			log.Fatal(err)
 		}
-
-		writeOrderToESAsync(order)
 	}()
 }
 
