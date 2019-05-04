@@ -27,6 +27,7 @@ type Instrument struct {
 	LongName       string
 	ExpirationDate time.Time
 	Status         string
+	Price          float32
 }
 
 type Account struct {

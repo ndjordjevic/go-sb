@@ -103,9 +103,10 @@ func fetchAllInstruments(c *gin.Context) {
 	var instruments []common.Instrument
 	m := map[string]interface{}{}
 
-	iter := session.Query("SELECT market, isin, currency, short_name, long_name, status, expiration_date FROM instruments").Iter()
+	iter := session.Query("SELECT instrument_key, market, isin, currency, short_name, long_name, status, expiration_date FROM instruments").Iter()
 	for iter.MapScan(m) {
 		instruments = append(instruments, common.Instrument{
+			InstrumentKey:  m["instrument_key"].(string),
 			Market:         m["market"].(string),
 			ISIN:           m["isin"].(string),
 			Currency:       m["currency"].(string),
@@ -113,6 +114,7 @@ func fetchAllInstruments(c *gin.Context) {
 			LongName:       m["long_name"].(string),
 			ExpirationDate: m["expiration_date"].(time.Time),
 			Status:         m["status"].(string),
+			Price:          float32(0),
 		})
 
 		m = map[string]interface{}{}

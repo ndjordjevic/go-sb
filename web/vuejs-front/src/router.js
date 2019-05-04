@@ -3,6 +3,7 @@ import Router from 'vue-router'
 import Home from './views/Home.vue'
 import Order from './views/Order'
 import SearchOrder from './views/SearchOrder'
+import Instruments from './views/Instruments'
 
 Vue.use(Router)
 
@@ -30,6 +31,11 @@ export default new Router({
       path: '/searchorder',
       name: 'searchorder',
       component: SearchOrder
+    },
+    {
+      path: '/instruments',
+      name: 'instruments',
+      component: Instruments
     }
   ]
 })
