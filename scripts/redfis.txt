@@ -1,0 +1,14 @@
+# Start Redis server after installing it with 'brew'
+redis-server /usr/local/etc/redis.conf
+
+# Ping local redis instance
+redis-cli PING
+
+# Starr Redis CLI
+redis-cli
+
+# Get all the keys (in redis-cli) run
+KEYS *
+
+# Monitor Redis commands sent to the server (in redis-cli) run:
+MONITOR

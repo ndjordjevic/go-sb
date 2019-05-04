@@ -12,8 +12,8 @@ func main() {
 	instrumentToSend := common.Instrument{
 		Market:         "Xetra",
 		ISIN:           "APL001",
-		Currency:       "SEK",
-		InstrumentKey:  "Xetra|APL001|SEK",
+		Currency:       "EUR",
+		InstrumentKey:  "Xetra|APL001|EUR",
 		ShortName:      "APL",
 		LongName:       "APPLE Systems",
 		ExpirationDate: time.Date(2019, time.December, 10, 0, 0, 0, 0, time.UTC),
