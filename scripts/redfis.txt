@@ -12,3 +12,15 @@ KEYS *
 
 # Monitor Redis commands sent to the server (in redis-cli) run:
 MONITOR
+
+# Delete all keys in DB
+FLUSHDB
+
+# Get all keys/values from a particular hash for a given key
+HGETALL instrument_prices
+
+# Get particular key/value from a particular hash for a given key
+HGET instrument_prices Xetra|APL001|EUR
+
+# Set key/value in a hash for a given key
+HSET instrument_prices Xetra|APL001|USD 44

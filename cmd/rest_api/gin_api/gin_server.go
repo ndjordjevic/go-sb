@@ -5,7 +5,9 @@ import (
 	"github.com/gin-contrib/cors"
 	"github.com/gin-gonic/gin"
 	"github.com/gocql/gocql"
-	orderpb "github.com/ndjordjevic/go-sb/api"
+	"github.com/golang/protobuf/ptypes/empty"
+	orderpb "github.com/ndjordjevic/go-sb/api/order"
+	pricepb "github.com/ndjordjevic/go-sb/api/price"
 	"github.com/ndjordjevic/go-sb/internal/common"
 	"google.golang.org/grpc"
 	"gopkg.in/olivere/elastic.v7"
@@ -17,6 +19,7 @@ import (
 
 var session *gocql.Session
 var orderHandlerServiceClient orderpb.OrderHandlerServiceClient
+var priceServiceClient pricepb.PriceServiceClient
 
 func init() {
 	// connect to Cassandra cluster
@@ -30,20 +33,34 @@ func main() {
 	defer session.Close()
 
 	// grpc client connection
-	clientConn, err := grpc.Dial("localhost:50051", grpc.WithInsecure())
+	orderClientConn, err := grpc.Dial("localhost:50051", grpc.WithInsecure())
 
 	if err != nil {
 		log.Fatal(err)
 	}
 
 	defer func() {
-		if err := clientConn.Close(); err != nil {
+		if err := orderClientConn.Close(); err != nil {
+			log.Fatal(err)
+		}
+	}()
+
+	// grpc client connection
+	priceClientConn, err := grpc.Dial("localhost:50071", grpc.WithInsecure())
+
+	if err != nil {
+		log.Fatal(err)
+	}
+
+	defer func() {
+		if err := priceClientConn.Close(); err != nil {
 			log.Fatal(err)
 		}
 	}()
 
 	// grpc service client
-	orderHandlerServiceClient = orderpb.NewOrderHandlerServiceClient(clientConn)
+	orderHandlerServiceClient = orderpb.NewOrderHandlerServiceClient(orderClientConn)
+	priceServiceClient = pricepb.NewPriceServiceClient(priceClientConn)
 
 	// gin gonic routes
 	router := gin.Default()
@@ -104,6 +121,15 @@ func fetchAllInstruments(c *gin.Context) {
 	if err := iter.Close(); err != nil {
 		log.Fatal(err)
 	}
+
+	// Get prices
+	res, err := priceServiceClient.RequestPrices(context.Background(), &empty.Empty{})
+
+	if err != nil {
+		log.Fatal(err)
+	}
+
+	log.Println(res)
 
 	c.JSON(http.StatusOK, gin.H{"status": http.StatusOK, "data": instruments})
 }

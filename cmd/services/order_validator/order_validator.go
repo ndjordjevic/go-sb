@@ -3,7 +3,7 @@ package main
 import (
 	"context"
 	"github.com/gocql/gocql"
-	orderpb "github.com/ndjordjevic/go-sb/api"
+	orderpb "github.com/ndjordjevic/go-sb/api/order"
 	"google.golang.org/grpc"
 	"log"
 	"net"

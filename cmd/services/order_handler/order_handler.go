@@ -4,7 +4,7 @@ import (
 	"context"
 	"fmt"
 	"github.com/gocql/gocql"
-	orderpb "github.com/ndjordjevic/go-sb/api"
+	orderpb "github.com/ndjordjevic/go-sb/api/order"
 	"github.com/ndjordjevic/go-sb/internal/common"
 	"google.golang.org/grpc"
 	"gopkg.in/olivere/elastic.v7"

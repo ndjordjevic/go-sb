@@ -17,7 +17,7 @@ func main() {
 	defer session.Close()
 
 	var instrumentKey string
-	// new Redis connection pool
+	// new Redis pool and connection
 	pool := newPool()
 	conn := pool.Get()
 	defer func() {
@@ -31,7 +31,7 @@ func main() {
 		for iter.Scan(&instrumentKey) {
 			price := rand.Intn(100)
 
-			_, err := conn.Do("SET", instrumentKey, price)
+			_, err := conn.Do("HSET", "instrument_prices", instrumentKey, price)
 			if err != nil {
 				log.Println(err)
 			}
