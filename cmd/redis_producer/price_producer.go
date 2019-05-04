@@ -29,12 +29,14 @@ func main() {
 	for {
 		iter := session.Query("SELECT instrument_key FROM instruments").Iter()
 		for iter.Scan(&instrumentKey) {
-			log.Println(instrumentKey)
+			price := rand.Intn(100)
 
-			_, err := conn.Do("SET", instrumentKey, rand.Intn(100))
+			_, err := conn.Do("SET", instrumentKey, price)
 			if err != nil {
 				log.Println(err)
 			}
+
+			log.Println("Instrument:", instrumentKey, "Price:", price)
 		}
 
 		if err := iter.Close(); err != nil {
