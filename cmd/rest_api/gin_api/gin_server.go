@@ -93,6 +93,8 @@ func main() {
 
 	router.GET("/api/v1/go-sb/orders/search", searchOrders)
 
+	router.GET("/api/v1/go-sb/prices/", getPrices)
+
 	_ = router.Run(":8010")
 }
 
@@ -121,15 +123,6 @@ func fetchAllInstruments(c *gin.Context) {
 	if err := iter.Close(); err != nil {
 		log.Fatal(err)
 	}
-
-	// Get prices
-	res, err := priceServiceClient.RequestPrices(context.Background(), &empty.Empty{})
-
-	if err != nil {
-		log.Fatal(err)
-	}
-
-	log.Println(res)
 
 	c.JSON(http.StatusOK, gin.H{"status": http.StatusOK, "data": instruments})
 }
@@ -242,4 +235,15 @@ func searchOrders(c *gin.Context) {
 	}
 
 	c.JSON(http.StatusOK, gin.H{"status": http.StatusOK, "data": orders})
+}
+
+func getPrices(c *gin.Context) {
+	// Get prices
+	res, err := priceServiceClient.RequestPrices(context.Background(), &empty.Empty{})
+
+	if err != nil {
+		log.Fatal(err)
+	}
+
+	c.JSON(http.StatusOK, gin.H{"status": http.StatusOK, "data": res.Prices})
 }
