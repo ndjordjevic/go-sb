@@ -12,11 +12,17 @@ message Price {
 }
 
 message GetAllPricesResponse {
-    repeated Price prices  = 1;
+    repeated Price prices = 1;
 }
 
+message PriceChangeResponse {
+    Price price = 1;
+}
 
 service PriceService {
-    rpc RequestPrices(google.protobuf.Empty) returns (GetAllPricesResponse) {
+    rpc GetAllPrices (google.protobuf.Empty) returns (GetAllPricesResponse) {
+    };
+
+    rpc PriceChange (google.protobuf.Empty) returns (stream PriceChangeResponse) {
     };
 }

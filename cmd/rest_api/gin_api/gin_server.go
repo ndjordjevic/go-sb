@@ -10,6 +10,7 @@ import (
 	pricepb "github.com/ndjordjevic/go-sb/api/price"
 	"github.com/ndjordjevic/go-sb/internal/common"
 	"google.golang.org/grpc"
+	"gopkg.in/olahol/melody.v1"
 	"gopkg.in/olivere/elastic.v7"
 	"log"
 	"net/http"
@@ -62,14 +63,11 @@ func main() {
 	orderHandlerServiceClient = orderpb.NewOrderHandlerServiceClient(orderClientConn)
 	priceServiceClient = pricepb.NewPriceServiceClient(priceClientConn)
 
-	// gin gonic routes
+	// gin gonic routes and melody (websocket) setup
 	router := gin.Default()
+	m := melody.New()
+	m.Upgrader.CheckOrigin = func(r *http.Request) bool { return true }
 
-	// CORS for https://foo.com and https://github.com origins, allowing:
-	// - PUT and PATCH methods
-	// - Origin header
-	// - Credentials share
-	// - Preflight requests cached for 12 hours
 	router.Use(cors.New(cors.Config{
 		AllowOrigins:     []string{"http://localhost:8080"},
 		AllowMethods:     []string{"PUT", "PATCH", "POST", "OPTIONS"},
@@ -91,9 +89,26 @@ func main() {
 	ordersV1 := router.Group("/api/v1/go-sb/orders/")
 	ordersV1.POST("/", createOrder)
 
-	router.GET("/api/v1/go-sb/orders/search", searchOrders)
+	router.GET("/api/v1/go-sb/orders/search/", searchOrders)
 
 	router.GET("/api/v1/go-sb/prices/", getPrices)
+
+	router.GET("/ws/", func(c *gin.Context) {
+		if err := m.HandleRequest(c.Writer, c.Request); err != nil {
+			log.Fatal(err)
+		}
+	})
+
+	m.HandleConnect(func(s *melody.Session) {
+		log.Println("Connected to websocket", &s)
+	})
+
+	m.HandleMessage(func(s *melody.Session, msg []byte) {
+		log.Println("Message received:", msg)
+		if err := m.Broadcast(msg); err != nil {
+			log.Fatal(err)
+		}
+	})
 
 	_ = router.Run(":8010")
 }
@@ -241,7 +256,7 @@ func searchOrders(c *gin.Context) {
 
 func getPrices(c *gin.Context) {
 	// Get prices
-	res, err := priceServiceClient.RequestPrices(context.Background(), &empty.Empty{})
+	res, err := priceServiceClient.GetAllPrices(context.Background(), &empty.Empty{})
 
 	if err != nil {
 		log.Fatal(err)

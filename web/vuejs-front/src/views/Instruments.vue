@@ -3,27 +3,28 @@
     <div class="row">
       <b-table striped hover :items="items"></b-table>
     </div>
+    <div class="row">
+      <button v-on:click="greet">Greet</button>
+    </div>
   </div>
 </template>
 
 <script>
+
 export default {
-  name: 'searchorder',
+  name: 'instruments',
   data () {
     return {
-      query: '',
       items: []
     }
   },
   methods: {
-    search () {
-      this.$http.get('/orders/search?q=' + this.query)
-        .then(response => {
-          this.items = response.data.data
-        })
+    greet: function (event) {
+      this.$socket.send('some data')
     }
   },
   created: function () {
+    console.log('created')
     this.$http.get('/instruments/').then(response => {
       this.items = response.data.data
 
@@ -37,6 +38,10 @@ export default {
         })
       })
     })
+  },
+  mounted () {
+    console.log('mounted')
+    this.$options.sockets.onmessage = (data) => console.log(data)
   }
 }
 </script>

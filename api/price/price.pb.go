@@ -111,15 +111,55 @@ func (m *GetAllPricesResponse) GetPrices() []*Price {
 	return nil
 }
 
+type PriceChangeResponse struct {
+	Price                *Price   `protobuf:"bytes,1,opt,name=price,proto3" json:"price,omitempty"`
+	XXX_NoUnkeyedLiteral struct{} `json:"-"`
+	XXX_unrecognized     []byte   `json:"-"`
+	XXX_sizecache        int32    `json:"-"`
+}
+
+func (m *PriceChangeResponse) Reset()         { *m = PriceChangeResponse{} }
+func (m *PriceChangeResponse) String() string { return proto.CompactTextString(m) }
+func (*PriceChangeResponse) ProtoMessage()    {}
+func (*PriceChangeResponse) Descriptor() ([]byte, []int) {
+	return fileDescriptor_48f266350c2d41c6, []int{2}
+}
+
+func (m *PriceChangeResponse) XXX_Unmarshal(b []byte) error {
+	return xxx_messageInfo_PriceChangeResponse.Unmarshal(m, b)
+}
+func (m *PriceChangeResponse) XXX_Marshal(b []byte, deterministic bool) ([]byte, error) {
+	return xxx_messageInfo_PriceChangeResponse.Marshal(b, m, deterministic)
+}
+func (m *PriceChangeResponse) XXX_Merge(src proto.Message) {
+	xxx_messageInfo_PriceChangeResponse.Merge(m, src)
+}
+func (m *PriceChangeResponse) XXX_Size() int {
+	return xxx_messageInfo_PriceChangeResponse.Size(m)
+}
+func (m *PriceChangeResponse) XXX_DiscardUnknown() {
+	xxx_messageInfo_PriceChangeResponse.DiscardUnknown(m)
+}
+
+var xxx_messageInfo_PriceChangeResponse proto.InternalMessageInfo
+
+func (m *PriceChangeResponse) GetPrice() *Price {
+	if m != nil {
+		return m.Price
+	}
+	return nil
+}
+
 func init() {
 	proto.RegisterType((*Price)(nil), "price.Price")
 	proto.RegisterType((*GetAllPricesResponse)(nil), "price.GetAllPricesResponse")
+	proto.RegisterType((*PriceChangeResponse)(nil), "price.PriceChangeResponse")
 }
 
 func init() { proto.RegisterFile("api/price/price.proto", fileDescriptor_48f266350c2d41c6) }
 
 var fileDescriptor_48f266350c2d41c6 = []byte{
-	// 217 bytes of a gzipped FileDescriptorProto
+	// 253 bytes of a gzipped FileDescriptorProto
 	0x1f, 0x8b, 0x08, 0x00, 0x00, 0x00, 0x00, 0x00, 0x02, 0xff, 0xe2, 0x12, 0x4d, 0x2c, 0xc8, 0xd4,
 	0x2f, 0x28, 0xca, 0x4c, 0x4e, 0x85, 0x90, 0x7a, 0x05, 0x45, 0xf9, 0x25, 0xf9, 0x42, 0xac, 0x60,
 	0x8e, 0x94, 0x74, 0x7a, 0x7e, 0x7e, 0x7a, 0x0e, 0x48, 0x2a, 0xbf, 0x24, 0x3f, 0xa9, 0x34, 0x4d,
@@ -129,11 +169,13 @@ var fileDescriptor_48f266350c2d41c6 = []byte{
 	0x02, 0xa3, 0x06, 0x53, 0x10, 0x84, 0xa3, 0x64, 0xc3, 0x25, 0xe2, 0x9e, 0x5a, 0xe2, 0x98, 0x93,
 	0x03, 0x36, 0xaa, 0x38, 0x28, 0xb5, 0xb8, 0x20, 0x3f, 0xaf, 0x18, 0x64, 0x26, 0x1b, 0x58, 0x41,
 	0xb1, 0x04, 0xa3, 0x02, 0xb3, 0x06, 0xb7, 0x11, 0x8f, 0x1e, 0xc4, 0x79, 0x60, 0x65, 0x41, 0x50,
-	0x39, 0xa3, 0x30, 0x2e, 0x1e, 0xb0, 0x40, 0x70, 0x6a, 0x51, 0x19, 0xc8, 0x25, 0x6e, 0x5c, 0xbc,
-	0x41, 0xa9, 0x85, 0xa5, 0xa9, 0xc5, 0x25, 0x10, 0xe3, 0x84, 0xc4, 0xf4, 0x20, 0x3e, 0xd0, 0x83,
-	0xf9, 0x40, 0xcf, 0x15, 0xe4, 0x03, 0x29, 0x69, 0xa8, 0x71, 0xd8, 0xec, 0x56, 0x62, 0x70, 0xe2,
-	0x8c, 0x62, 0x07, 0xcb, 0x17, 0x24, 0x25, 0xb1, 0x81, 0x75, 0x1a, 0x03, 0x02, 0x00, 0x00, 0xff,
-	0xff, 0x50, 0x3a, 0x92, 0x64, 0x29, 0x01, 0x00, 0x00,
+	0x39, 0x25, 0x4b, 0x2e, 0x61, 0xb0, 0x80, 0x73, 0x46, 0x62, 0x5e, 0x7a, 0x2a, 0x5c, 0xb3, 0x12,
+	0xcc, 0x2a, 0x90, 0x43, 0xd0, 0xf5, 0x42, 0xa4, 0x8c, 0xe6, 0x30, 0x72, 0xf1, 0x80, 0x05, 0x82,
+	0x53, 0x8b, 0xca, 0x40, 0xbe, 0x70, 0xe5, 0xe2, 0x41, 0x76, 0x89, 0x90, 0x98, 0x1e, 0xc4, 0xf3,
+	0x7a, 0x30, 0xcf, 0xeb, 0xb9, 0x82, 0x3c, 0x2f, 0x25, 0x0d, 0x35, 0x0d, 0x9b, 0xb3, 0x95, 0x18,
+	0x84, 0x5c, 0xb9, 0xb8, 0x91, 0x9c, 0x84, 0xd3, 0x14, 0x29, 0x64, 0x37, 0xa1, 0x3a, 0x5f, 0x89,
+	0xc1, 0x80, 0xd1, 0x89, 0x33, 0x8a, 0x1d, 0xac, 0xa0, 0x20, 0x29, 0x89, 0x0d, 0xac, 0xd5, 0x18,
+	0x10, 0x00, 0x00, 0xff, 0xff, 0x1b, 0x6b, 0xf5, 0xcc, 0xab, 0x01, 0x00, 0x00,
 }
 
 // Reference imports to suppress errors if they are not otherwise used.
@@ -148,7 +190,8 @@ const _ = grpc.SupportPackageIsVersion4
 //
 // For semantics around ctx use and closing/ending streaming RPCs, please refer to https://godoc.org/google.golang.org/grpc#ClientConn.NewStream.
 type PriceServiceClient interface {
-	RequestPrices(ctx context.Context, in *empty.Empty, opts ...grpc.CallOption) (*GetAllPricesResponse, error)
+	GetAllPrices(ctx context.Context, in *empty.Empty, opts ...grpc.CallOption) (*GetAllPricesResponse, error)
+	PriceChange(ctx context.Context, in *empty.Empty, opts ...grpc.CallOption) (PriceService_PriceChangeClient, error)
 }
 
 type priceServiceClient struct {
@@ -159,48 +202,105 @@ func NewPriceServiceClient(cc *grpc.ClientConn) PriceServiceClient {
 	return &priceServiceClient{cc}
 }
 
-func (c *priceServiceClient) RequestPrices(ctx context.Context, in *empty.Empty, opts ...grpc.CallOption) (*GetAllPricesResponse, error) {
+func (c *priceServiceClient) GetAllPrices(ctx context.Context, in *empty.Empty, opts ...grpc.CallOption) (*GetAllPricesResponse, error) {
 	out := new(GetAllPricesResponse)
-	err := c.cc.Invoke(ctx, "/price.PriceService/RequestPrices", in, out, opts...)
+	err := c.cc.Invoke(ctx, "/price.PriceService/GetAllPrices", in, out, opts...)
 	if err != nil {
 		return nil, err
 	}
 	return out, nil
 }
 
+func (c *priceServiceClient) PriceChange(ctx context.Context, in *empty.Empty, opts ...grpc.CallOption) (PriceService_PriceChangeClient, error) {
+	stream, err := c.cc.NewStream(ctx, &_PriceService_serviceDesc.Streams[0], "/price.PriceService/PriceChange", opts...)
+	if err != nil {
+		return nil, err
+	}
+	x := &priceServicePriceChangeClient{stream}
+	if err := x.ClientStream.SendMsg(in); err != nil {
+		return nil, err
+	}
+	if err := x.ClientStream.CloseSend(); err != nil {
+		return nil, err
+	}
+	return x, nil
+}
+
+type PriceService_PriceChangeClient interface {
+	Recv() (*PriceChangeResponse, error)
+	grpc.ClientStream
+}
+
+type priceServicePriceChangeClient struct {
+	grpc.ClientStream
+}
+
+func (x *priceServicePriceChangeClient) Recv() (*PriceChangeResponse, error) {
+	m := new(PriceChangeResponse)
+	if err := x.ClientStream.RecvMsg(m); err != nil {
+		return nil, err
+	}
+	return m, nil
+}
+
 // PriceServiceServer is the server API for PriceService service.
 type PriceServiceServer interface {
-	RequestPrices(context.Context, *empty.Empty) (*GetAllPricesResponse, error)
+	GetAllPrices(context.Context, *empty.Empty) (*GetAllPricesResponse, error)
+	PriceChange(*empty.Empty, PriceService_PriceChangeServer) error
 }
 
 // UnimplementedPriceServiceServer can be embedded to have forward compatible implementations.
 type UnimplementedPriceServiceServer struct {
 }
 
-func (*UnimplementedPriceServiceServer) RequestPrices(ctx context.Context, req *empty.Empty) (*GetAllPricesResponse, error) {
-	return nil, status.Errorf(codes.Unimplemented, "method RequestPrices not implemented")
+func (*UnimplementedPriceServiceServer) GetAllPrices(ctx context.Context, req *empty.Empty) (*GetAllPricesResponse, error) {
+	return nil, status.Errorf(codes.Unimplemented, "method GetAllPrices not implemented")
+}
+func (*UnimplementedPriceServiceServer) PriceChange(req *empty.Empty, srv PriceService_PriceChangeServer) error {
+	return status.Errorf(codes.Unimplemented, "method PriceChange not implemented")
 }
 
 func RegisterPriceServiceServer(s *grpc.Server, srv PriceServiceServer) {
 	s.RegisterService(&_PriceService_serviceDesc, srv)
 }
 
-func _PriceService_RequestPrices_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+func _PriceService_GetAllPrices_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
 	in := new(empty.Empty)
 	if err := dec(in); err != nil {
 		return nil, err
 	}
 	if interceptor == nil {
-		return srv.(PriceServiceServer).RequestPrices(ctx, in)
+		return srv.(PriceServiceServer).GetAllPrices(ctx, in)
 	}
 	info := &grpc.UnaryServerInfo{
 		Server:     srv,
-		FullMethod: "/price.PriceService/RequestPrices",
+		FullMethod: "/price.PriceService/GetAllPrices",
 	}
 	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
-		return srv.(PriceServiceServer).RequestPrices(ctx, req.(*empty.Empty))
+		return srv.(PriceServiceServer).GetAllPrices(ctx, req.(*empty.Empty))
 	}
 	return interceptor(ctx, in, info, handler)
+}
+
+func _PriceService_PriceChange_Handler(srv interface{}, stream grpc.ServerStream) error {
+	m := new(empty.Empty)
+	if err := stream.RecvMsg(m); err != nil {
+		return err
+	}
+	return srv.(PriceServiceServer).PriceChange(m, &priceServicePriceChangeServer{stream})
+}
+
+type PriceService_PriceChangeServer interface {
+	Send(*PriceChangeResponse) error
+	grpc.ServerStream
+}
+
+type priceServicePriceChangeServer struct {
+	grpc.ServerStream
+}
+
+func (x *priceServicePriceChangeServer) Send(m *PriceChangeResponse) error {
+	return x.ServerStream.SendMsg(m)
 }
 
 var _PriceService_serviceDesc = grpc.ServiceDesc{
@@ -208,10 +308,16 @@ var _PriceService_serviceDesc = grpc.ServiceDesc{
 	HandlerType: (*PriceServiceServer)(nil),
 	Methods: []grpc.MethodDesc{
 		{
-			MethodName: "RequestPrices",
-			Handler:    _PriceService_RequestPrices_Handler,
+			MethodName: "GetAllPrices",
+			Handler:    _PriceService_GetAllPrices_Handler,
 		},
 	},
-	Streams:  []grpc.StreamDesc{},
+	Streams: []grpc.StreamDesc{
+		{
+			StreamName:    "PriceChange",
+			Handler:       _PriceService_PriceChange_Handler,
+			ServerStreams: true,
+		},
+	},
 	Metadata: "api/price/price.proto",
 }

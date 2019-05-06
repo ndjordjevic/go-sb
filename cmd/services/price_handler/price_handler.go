@@ -12,9 +12,13 @@ import (
 
 type priceServer struct{}
 
+func (priceServer) PriceChange(req *empty.Empty, stream pricepb.PriceService_PriceChangeServer) error {
+	panic("implement me")
+}
+
 var pool = newPool()
 
-func (priceServer) RequestPrices(context.Context, *empty.Empty) (*pricepb.GetAllPricesResponse, error) {
+func (priceServer) GetAllPrices(context.Context, *empty.Empty) (*pricepb.GetAllPricesResponse, error) {
 	// new Redis pool and connection
 	conn := pool.Get()
 	defer func() {
