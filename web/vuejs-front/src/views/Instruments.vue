@@ -41,7 +41,17 @@ export default {
   },
   mounted () {
     console.log('mounted')
-    this.$options.sockets.onmessage = (data) => console.log(data)
+    this.$options.sockets.onmessage = function (message) {
+      console.log('Socket message received: ' + message.data)
+
+      var receivedInstrumentPrice = JSON.parse(message.data)
+
+      this.items.forEach(function (instrument) {
+        if (instrument.InstrumentKey === receivedInstrumentPrice.instrumentKey) {
+          instrument.Price = receivedInstrumentPrice.price
+        }
+      })
+    }
   }
 }
 </script>

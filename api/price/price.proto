@@ -15,7 +15,7 @@ message GetAllPricesResponse {
     repeated Price prices = 1;
 }
 
-message PriceChangeResponse {
+message StreamPriceChangeResponse {
     Price price = 1;
 }
 
@@ -23,6 +23,6 @@ service PriceService {
     rpc GetAllPrices (google.protobuf.Empty) returns (GetAllPricesResponse) {
     };
 
-    rpc PriceChange (google.protobuf.Empty) returns (stream PriceChangeResponse) {
+    rpc StreamPriceChange (google.protobuf.Empty) returns (stream StreamPriceChangeResponse) {
     };
 }

@@ -24,3 +24,6 @@ HGET instrument_prices Xetra|APL001|EUR
 
 # Set key/value in a hash for a given key
 HSET instrument_prices Xetra|APL001|USD 44
+
+# Subscribe to a channel
+SUBSCRIBE price_updates

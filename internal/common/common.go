@@ -58,6 +58,11 @@ type Order struct {
 	Created       time.Time
 }
 
+type InstrumentPrice struct {
+	InstrumentKey string
+	Price         float32
+}
+
 func ConvertToByteArray(object interface{}) []byte {
 	reqBodyBytes := new(bytes.Buffer)
 	err := json.NewEncoder(reqBodyBytes).Encode(object)

@@ -2,6 +2,7 @@ package main
 
 import (
 	"context"
+	"encoding/json"
 	"github.com/gin-contrib/cors"
 	"github.com/gin-gonic/gin"
 	"github.com/gocql/gocql"
@@ -12,6 +13,7 @@ import (
 	"google.golang.org/grpc"
 	"gopkg.in/olahol/melody.v1"
 	"gopkg.in/olivere/elastic.v7"
+	"io"
 	"log"
 	"net/http"
 	"reflect"
@@ -109,6 +111,32 @@ func main() {
 			log.Fatal(err)
 		}
 	})
+
+	go func() {
+		resStream, err := priceServiceClient.StreamPriceChange(context.Background(), &empty.Empty{})
+		if err != nil {
+			log.Fatal(err)
+		}
+		for {
+			msg, err := resStream.Recv()
+
+			if err == io.EOF {
+				break
+			}
+
+			if err != nil {
+				log.Fatal(err)
+			}
+
+			log.Println("Instrument price change received:", msg.Price)
+
+			b, err := json.Marshal(msg.Price)
+
+			if err := m.Broadcast(b); err != nil {
+				log.Fatal(err)
+			}
+		}
+	}()
 
 	_ = router.Run(":8010")
 }

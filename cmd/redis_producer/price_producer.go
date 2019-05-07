@@ -1,8 +1,13 @@
 package main
 
 import (
+	"bytes"
+	"encoding/base64"
+	"encoding/gob"
+	"fmt"
 	"github.com/gocql/gocql"
 	"github.com/gomodule/redigo/redis"
+	"github.com/ndjordjevic/go-sb/internal/common"
 	"log"
 	"math/rand"
 	"time"
@@ -37,13 +42,20 @@ func main() {
 			}
 
 			log.Println("Instrument:", instrumentKey, "Price:", price)
+
+			_, err = conn.Do("PUBLISH", "price_updates", ToGOB64(common.InstrumentPrice{
+				instrumentKey, float32(price),
+			}))
+			if err != nil {
+				log.Println(err)
+			}
 		}
 
 		if err := iter.Close(); err != nil {
 			log.Fatal(err)
 		}
 
-		time.Sleep(60000 * time.Millisecond)
+		time.Sleep(10000 * time.Millisecond)
 	}
 }
 
@@ -63,4 +75,15 @@ func newPool() *redis.Pool {
 			return c, err
 		},
 	}
+}
+
+// go binary encoder
+func ToGOB64(instrumentPrice common.InstrumentPrice) string {
+	b := bytes.Buffer{}
+	e := gob.NewEncoder(&b)
+	err := e.Encode(instrumentPrice)
+	if err != nil {
+		fmt.Println(`failed gob Encode`, err)
+	}
+	return base64.StdEncoding.EncodeToString(b.Bytes())
 }
