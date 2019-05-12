@@ -45,6 +45,7 @@ github.com/golang/protobuf v1.3.1/go.mod h1:6lQm79b+lXiMfvg/cZm0SGofjICqVBUtrP5y
 github.com/golang/snappy v0.0.0-20170215233205-553a64147049/go.mod h1:/XxbfmMg8lxefKM7IXC3fBNl/7bRcc72aCRzEWrmP2Q=
 github.com/golang/snappy v0.0.0-20180518054509-2e65f85255db h1:woRePGFeVFfLKN/pOkfl+p/TAqKOfFu+7KPlMVpok/w=
 github.com/golang/snappy v0.0.0-20180518054509-2e65f85255db/go.mod h1:/XxbfmMg8lxefKM7IXC3fBNl/7bRcc72aCRzEWrmP2Q=
+github.com/gomodule/redigo v2.0.0+incompatible/go.mod h1:B4C85qUVwatsJoIUNIfCRsp7qO0iAmpGFZ4EELWSbC4=
 github.com/google/go-cmp v0.2.0/go.mod h1:oXzfMopK8JAjlY9xF4vHSVASa0yLyX7SntLO5aqRK0M=
 github.com/gorilla/context v1.1.1/go.mod h1:kBGZzfjB9CEq2AlWe17Uuf7NDRt0dE0s8S51q0aT7Yg=
 github.com/gorilla/mux v1.6.2/go.mod h1:1lud6UwP+6orDFRuTfBEV8e9/aOM/c4fVVCaMa2zaAs=
@@ -72,10 +73,12 @@ github.com/matttproud/golang_protobuf_extensions v1.0.1/go.mod h1:D8He9yQNgCq6Z5
 github.com/modern-go/concurrent v0.0.0-20180306012644-bacd9c7ef1dd/go.mod h1:6dJC0mAP4ikYIbvyc7fijjWJddQyLn8Ig3JB5CqoB9Q=
 github.com/modern-go/reflect2 v1.0.1/go.mod h1:bx2lNnkwVCuqBIxFjflWJWanXIb3RllmbCylyMrvgv0=
 github.com/mwitkow/go-conntrack v0.0.0-20161129095857-cc309e4a2223/go.mod h1:qRWi+5nqEBWmkhHvq77mSJWrCKwh8bxhgT7d/eI7P4U=
-github.com/ndjordjevic/go-sb v0.0.0-20190507175501-90407ea83fc5 h1:QbFkPQBAYtHTY8bfZ0UwxCVgehjTG47bP/Suy1AoNaI=
-github.com/ndjordjevic/go-sb v0.0.0-20190507175501-90407ea83fc5/go.mod h1:ngViOtB09/2XPJqeG7H1d2U+/pYPIli+US4+jF319Xw=
-github.com/ndjordjevic/go-sb/cmd/common v0.0.0-20190512074924-7b9c263722c9 h1:MJCKJlS1kJSC41JsGss59nLKeWp7BNqARcnly3UVBjI=
-github.com/ndjordjevic/go-sb/cmd/common v0.0.0-20190512074924-7b9c263722c9/go.mod h1:vcqQE+N24485bQndfRoEiT/BztP2ctf+Zh86jy655PA=
+github.com/ndjordjevic/go-sb/api/order v0.0.0-20190512100935-8ac66f944e3c h1:ENiHPuWHCrADRDoQkhnXEsWFEL6nC/yfQBCI06u0tl0=
+github.com/ndjordjevic/go-sb/api/order v0.0.0-20190512100935-8ac66f944e3c/go.mod h1:2NsQIvXhxsvReuSj9a06HoaAZwceBGWQCqDDOnIxB1E=
+github.com/ndjordjevic/go-sb/api/price v0.0.0-20190512100935-8ac66f944e3c h1:KICXw4Qt565ZveO7G8aELJWSCjp1CrMiEgtN/QIr5FY=
+github.com/ndjordjevic/go-sb/api/price v0.0.0-20190512100935-8ac66f944e3c/go.mod h1:qs3GtjRfrlgXQesXi1Kw6D0s7iQtzgL4mZweVCWxxas=
+github.com/ndjordjevic/go-sb/cmd/common v0.0.0-20190512100935-8ac66f944e3c h1:CLev7/N0IigfJcrTqFS0g7/vs+RLdhoHIzhnlopnhdk=
+github.com/ndjordjevic/go-sb/cmd/common v0.0.0-20190512100935-8ac66f944e3c/go.mod h1:vcqQE+N24485bQndfRoEiT/BztP2ctf+Zh86jy655PA=
 github.com/olivere/elastic/v7 v7.0.0 h1:iw29D/OSXdR2loC4qPNddvWjuQqN7Co/uALVD4Si+D4=
 github.com/olivere/elastic/v7 v7.0.0/go.mod h1:h2vSaBKzz7eL+VsYPtIOXOURZlXmp+yY5MgyIW3Y/M0=
 github.com/onsi/ginkgo v1.6.0/go.mod h1:lLunBs/Ym6LB5Z9jYTR76FiuTmxDTDusOGeTQH+WWjE=
