@@ -4,11 +4,20 @@ docker version
 # docker engine config info
 docker info
 
-# run a nginx image in a bckg
+# Run container in a foreground
+docker container run --publish 80:80 nginx
+
+# run a nginx image in a background
 docker container run --publish 80:80 --detach nginx
+
+# run a nginx image in a background and assign a name to a container
+docker container run --publish 80:80 --detach --name webserver nginx
 
 # list all running containers
 docker container ls
+
+# list all containers
+docker container ls -a
 
 # stop docker container
 docker stop container_id
@@ -16,20 +25,50 @@ docker stop container_id
 # show docker container logs
 docker container logs container_name
 
-# show docker container processes
+# show docker container processes in running container
 docker container top container_name
 
 # list all containers, stopped or running
 docker container ls -a
 
-# remove docker containers
+# remove docker containers (add -f to force removing of running containers)
 docker container rm container_id container_id ...
 
 # show running processes (old command)
 docker ps
 
+# Start stopped container (add -ai to bash into the container)
+docker container start container_name
+
+# shows how all running containers are doing, live update of mem and cpu usage
+docker container stats
+
+# Inspect a container, show details about the container
+docker container inspect container_name
+
+# Start a container and run a command other than image's default cmd upon the container startup (run bash to ssh into the container)
+docker container run -it --name nginx bash
+
+# Run a container and delete on quiting (--rm)
+docker container run --rm container_name
+
+# Run a command in another process in a running container (command could be bash to ssh into the running container)
+run container exec -it container_name command
+
+# Show port forwarding for a container
+docker container port container_name
+
 # list all installed docker images
 docker images ls
 
-# shows how container is doing
-docker container stats
+# Pull an image from a docker hub
+docker image pull image_name
+
+# Show a history of an image
+docker image history image_name
+
+# Inspect an image
+docker image inspect image_name
+
+# Build a docker image from a Dockerfile (. is a path to the Dockerfile)
+docker image build -t image_tag .

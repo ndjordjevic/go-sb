@@ -26,7 +26,7 @@ var priceServiceClient pricepb.PriceServiceClient
 
 func init() {
 	// connect to Cassandra cluster
-	cluster := gocql.NewCluster("127.0.0.1")
+	cluster := gocql.NewCluster("localhost")
 	cluster.Keyspace = "go_sb"
 	session, _ = cluster.CreateSession()
 	log.Println("Connected to Cassandra.")
@@ -48,8 +48,9 @@ func main() {
 		}
 	}()
 
-	// grpc client connection
-	priceClientConn, err := grpc.Dial("localhost:50071", grpc.WithInsecure())
+	// price grpc client connection
+	priceClientConn, err := grpc.Dial("docker.for.mac.localhost:50071", grpc.WithInsecure()) // connect from a docker container
+	//priceClientConn, err := grpc.Dial("localhost:50071", grpc.WithInsecure()) // connect from a localhost
 
 	if err != nil {
 		log.Fatal(err)
