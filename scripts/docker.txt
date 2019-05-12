@@ -1,0 +1,35 @@
+# prints docker version
+docker version
+
+# docker engine config info
+docker info
+
+# run a nginx image in a bckg
+docker container run --publish 80:80 --detach nginx
+
+# list all running containers
+docker container ls
+
+# stop docker container
+docker stop container_id
+
+# show docker container logs
+docker container logs container_name
+
+# show docker container processes
+docker container top container_name
+
+# list all containers, stopped or running
+docker container ls -a
+
+# remove docker containers
+docker container rm container_id container_id ...
+
+# show running processes (old command)
+docker ps
+
+# list all installed docker images
+docker images ls
+
+# shows how container is doing
+docker container stats
