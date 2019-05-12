@@ -1,3 +1,7 @@
 # Created by .ignore support plugin (hsz.mobi)
 .idea/*
 .DS_Store
+/cmd/services/order_handler/order_handler
+/cmd/services/price_handler/price_handler
+/cmd/services/order_validator/order_validator
+/cmd/rest_api/gin_api/gin_api
