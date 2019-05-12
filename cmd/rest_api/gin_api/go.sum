@@ -79,6 +79,8 @@ github.com/ndjordjevic/go-sb/api/price v0.0.0-20190512100935-8ac66f944e3c h1:KIC
 github.com/ndjordjevic/go-sb/api/price v0.0.0-20190512100935-8ac66f944e3c/go.mod h1:qs3GtjRfrlgXQesXi1Kw6D0s7iQtzgL4mZweVCWxxas=
 github.com/ndjordjevic/go-sb/cmd/common v0.0.0-20190512100935-8ac66f944e3c h1:CLev7/N0IigfJcrTqFS0g7/vs+RLdhoHIzhnlopnhdk=
 github.com/ndjordjevic/go-sb/cmd/common v0.0.0-20190512100935-8ac66f944e3c/go.mod h1:vcqQE+N24485bQndfRoEiT/BztP2ctf+Zh86jy655PA=
+github.com/olivere/elastic v6.2.17+incompatible h1:g8tdYJgwHYh6LxfKp+YSgDmDVorZOm7+M8n1OkeQEWs=
+github.com/olivere/elastic v6.2.17+incompatible/go.mod h1:J+q1zQJTgAz9woqsbVRqGeB5G1iqDKVBWLNSYW8yfJ8=
 github.com/olivere/elastic/v7 v7.0.0 h1:iw29D/OSXdR2loC4qPNddvWjuQqN7Co/uALVD4Si+D4=
 github.com/olivere/elastic/v7 v7.0.0/go.mod h1:h2vSaBKzz7eL+VsYPtIOXOURZlXmp+yY5MgyIW3Y/M0=
 github.com/onsi/ginkgo v1.6.0/go.mod h1:lLunBs/Ym6LB5Z9jYTR76FiuTmxDTDusOGeTQH+WWjE=
