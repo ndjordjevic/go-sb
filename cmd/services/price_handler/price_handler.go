@@ -9,7 +9,7 @@ import (
 	"github.com/golang/protobuf/ptypes/empty"
 	"github.com/gomodule/redigo/redis"
 	pricepb "github.com/ndjordjevic/go-sb/api/price"
-	"github.com/ndjordjevic/go-sb/internal/common"
+	"github.com/ndjordjevic/go-sb/cmd/common"
 	"google.golang.org/grpc"
 	"log"
 	"net"
