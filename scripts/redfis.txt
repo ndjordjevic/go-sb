@@ -4,7 +4,7 @@ redis-server /usr/local/etc/redis.conf
 # Ping local redis instance
 redis-cli PING
 
-# Starr Redis CLI
+# Start Redis CLI
 redis-cli
 
 # Get all the keys (in redis-cli) run
