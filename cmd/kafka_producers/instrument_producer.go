@@ -3,19 +3,20 @@ package main
 import (
 	"fmt"
 	"github.com/Shopify/sarama"
-	"github.com/ndjordjevic/go-sb/internal/common"
+	"github.com/ndjordjevic/go-sb/cmd/common"
+
 	"gopkg.in/alecthomas/kingpin.v2"
 	"time"
 )
 
 func main() {
 	instrumentToSend := common.Instrument{
-		Market:         "Xetra",
-		ISIN:           "APL001",
+		Market:         "Eurex",
+		ISIN:           "FIS001",
 		Currency:       "EUR",
-		InstrumentKey:  "Xetra|APL001|EUR",
-		ShortName:      "APL",
-		LongName:       "APPLE Systems",
+		InstrumentKey:  "Xetra|FIS001|EUR",
+		ShortName:      "FIS",
+		LongName:       "FIS",
 		ExpirationDate: time.Date(2019, time.December, 10, 0, 0, 0, 0, time.UTC),
 		Status:         "ACTIVE",
 	}

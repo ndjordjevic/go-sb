@@ -5,7 +5,7 @@ import (
 	"fmt"
 	"github.com/Shopify/sarama"
 	"github.com/gocql/gocql"
-	"github.com/ndjordjevic/go-sb/internal/common"
+	"github.com/ndjordjevic/go-sb/cmd/common"
 	"gopkg.in/alecthomas/kingpin.v2"
 	"log"
 	"os"

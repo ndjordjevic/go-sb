@@ -3,7 +3,7 @@ package main
 import (
 	"fmt"
 	"github.com/Shopify/sarama"
-	"github.com/ndjordjevic/go-sb/internal/common"
+	"github.com/ndjordjevic/go-sb/cmd/common"
 	"gopkg.in/alecthomas/kingpin.v2"
 	"log"
 )
@@ -11,16 +11,16 @@ import (
 func main() {
 	userToSend := common.User{
 		Company:   "FIS",
-		Email:     "ggg@gmail.com",
-		FirstName: "Gaga",
-		LastName:  "Dragic",
-		Password:  "gaga123",
+		Email:     "rr@gmail.com",
+		FirstName: "Pera",
+		LastName:  "Peric",
+		Password:  "pera123",
 		Address:   "Save Simica 27",
-		City:      "Smederevo",
+		City:      "Belgrade",
 		Country:   "Serbia",
 		Accounts: []common.Account{
-			{Currency: "USD", Balance: 3000},
-			{Currency: "EUR", Balance: 1000},
+			{Currency: "USD", Balance: 5000},
+			{Currency: "EUR", Balance: 4000},
 		},
 	}
 
