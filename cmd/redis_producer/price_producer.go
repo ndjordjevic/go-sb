@@ -7,7 +7,7 @@ import (
 	"fmt"
 	"github.com/gocql/gocql"
 	"github.com/gomodule/redigo/redis"
-	"github.com/ndjordjevic/go-sb/internal/common"
+	"github.com/ndjordjevic/go-sb/cmd/common"
 	"log"
 	"math/rand"
 	"time"
