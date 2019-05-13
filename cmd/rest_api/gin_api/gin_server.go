@@ -94,7 +94,7 @@ func main() {
 	ordersV1 := router.Group("/api/v1/go-sb/orders/")
 	ordersV1.POST("/", createOrder)
 
-	router.GET("/api/v1/go-sb/orders/search/", searchOrders)
+	router.GET("/api/v1/go-sb/orders/search", searchOrders)
 
 	router.GET("/api/v1/go-sb/prices/", getPrices)
 
