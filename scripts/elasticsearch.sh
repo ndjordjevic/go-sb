@@ -9,6 +9,9 @@ curl http://localhost:9200/
 # Check cluster health
 curl -X GET "localhost:9200/_cat/health?v"
 
+# Nodes information
+curl 'http://localhost:9200/_nodes/http?pretty'
+
 # List all indexes
 curl -X GET "localhost:9200/_cat/indices?v"
 

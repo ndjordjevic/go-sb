@@ -72,3 +72,9 @@ docker image inspect image_name
 
 # Build a docker image from a Dockerfile (. is a path to the Dockerfile)
 docker image build -t image_tag .
+
+# Run gin_api go_sb app
+docker container run --name gin_api --rm --publish 8010:8010  gin_api:latest
+
+# Run gin_api go_sb app and get into container, run apk --update curl (to get curl downloaded)
+docker container run --name gin_api --rm -it --publish 8010:8010 gin_api:latest sh
