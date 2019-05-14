@@ -27,7 +27,7 @@ var priceServiceClient pricepb.PriceServiceClient
 func init() {
 	// connect to Cassandra cluster
 	cluster := gocql.NewCluster("localhost")
-	//cluster := gocql.NewCluster("docker.for.mac.localhost") // connect to cassandra from a docker container
+	//cluster := gocql.NewCluster("host.docker.internal") // connect to cassandra from a docker container
 	cluster.Keyspace = "go_sb"
 	session, _ = cluster.CreateSession()
 	log.Println("Connected to Cassandra.")
@@ -38,7 +38,7 @@ func main() {
 
 	// grpc client connection
 	orderClientConn, err := grpc.Dial("localhost:50051", grpc.WithInsecure())
-	//orderClientConn, err := grpc.Dial("docker.for.mac.localhost:50051", grpc.WithInsecure()) connect from a docker container
+	//orderClientConn, err := grpc.Dial("host.docker.internal:50051", grpc.WithInsecure()) // connect from a docker container
 
 	if err != nil {
 		log.Fatal(err)
@@ -51,8 +51,8 @@ func main() {
 	}()
 
 	// price grpc client connection
-	//priceClientConn, err := grpc.Dial("docker.for.mac.localhost:50071", grpc.WithInsecure()) // connect from a docker container
 	priceClientConn, err := grpc.Dial("localhost:50071", grpc.WithInsecure()) // connect from a localhost
+	//priceClientConn, err := grpc.Dial("host.docker.internal:50071", grpc.WithInsecure()) // connect from a docker container
 
 	if err != nil {
 		log.Fatal(err)
@@ -255,6 +255,7 @@ func searchOrders(c *gin.Context) {
 	ctx := context.Background()
 
 	client, err := elastic.NewClient()
+	//client, err := elastic.NewSimpleClient(elastic.SetURL("http://host.docker.internal:9200"))
 	if err != nil {
 		panic(err)
 	}
