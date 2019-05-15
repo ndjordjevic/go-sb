@@ -8,6 +8,7 @@ import (
 	"github.com/ndjordjevic/go-sb/cmd/common"
 	"github.com/olivere/elastic/v7"
 	"google.golang.org/grpc"
+	"google.golang.org/grpc/resolver"
 	"log"
 	"net"
 	"time"
@@ -54,6 +55,13 @@ const mapping = `
 }
 `
 
+const (
+	exampleScheme      = "example"
+	exampleServiceName = "lb.example.grpc.io"
+)
+
+var addrs = []string{"localhost:50061", "localhost:50062"}
+
 var session *gocql.Session
 
 func init() {
@@ -62,6 +70,8 @@ func init() {
 	cluster.Keyspace = "go_sb"
 	session, _ = cluster.CreateSession()
 	log.Println("Connected to Cassandra.")
+
+	resolver.Register(&exampleResolverBuilder{})
 }
 
 func (*server) HandleOrder(ctx context.Context, req *orderpb.HandleOrderRequest) (*orderpb.HandleOrderResponse, error) {
@@ -166,7 +176,9 @@ func callOrderValidatorService(order common.Order) *orderpb.ValidateOrderRespons
 	}
 
 	// validation grpc client connection
-	clientConn, err := grpc.Dial("localhost:50061", grpc.WithInsecure())
+	clientConn, err := grpc.Dial(fmt.Sprintf("%s:///%s", exampleScheme, exampleServiceName),
+		grpc.WithBalancerName("round_robin"), // comment this to turn off round_robin LB and turn on pic_first (tries to connect to first address and if its not available dials others)
+		grpc.WithInsecure())
 
 	if err != nil {
 		log.Fatal(err)
@@ -215,3 +227,38 @@ func main() {
 		log.Fatal(err)
 	}
 }
+
+// Following is an example name resolver implementation. Read the name
+// resolution example to learn more about it.
+
+type exampleResolverBuilder struct{}
+
+func (*exampleResolverBuilder) Build(target resolver.Target, cc resolver.ClientConn, opts resolver.BuildOption) (resolver.Resolver, error) {
+	r := &exampleResolver{
+		target: target,
+		cc:     cc,
+		addrsStore: map[string][]string{
+			exampleServiceName: addrs,
+		},
+	}
+	r.start()
+	return r, nil
+}
+func (*exampleResolverBuilder) Scheme() string { return exampleScheme }
+
+type exampleResolver struct {
+	target     resolver.Target
+	cc         resolver.ClientConn
+	addrsStore map[string][]string
+}
+
+func (r *exampleResolver) start() {
+	addrStrs := r.addrsStore[r.target.Endpoint]
+	addrs := make([]resolver.Address, len(addrStrs))
+	for i, s := range addrStrs {
+		addrs[i] = resolver.Address{Addr: s}
+	}
+	r.cc.UpdateState(resolver.State{Addresses: addrs})
+}
+func (*exampleResolver) ResolveNow(o resolver.ResolveNowOption) {}
+func (*exampleResolver) Close()                                 {}

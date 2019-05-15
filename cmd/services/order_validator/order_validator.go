@@ -49,12 +49,15 @@ func checkOrder(req *orderpb.ValidateOrderRequest) bool {
 			}
 		}
 	}
+
+	//time.Sleep(20000 * time.Millisecond) // uncomment this to test concurrent service running
+
 	return valid
 }
 
 func main() {
 	// validate order grpc service server
-	lis, err := net.Listen("tcp", "localhost:50061")
+	lis, err := net.Listen("tcp", "localhost:50061") // change this to localhost:50062 to start another instance on a different port
 
 	if err != nil {
 		log.Fatal(err)
