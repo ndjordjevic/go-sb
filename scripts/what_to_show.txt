@@ -1,0 +1,14 @@
+1. draw a flow
+2. data model (instrument, order, user with accounts)
+3. enter order vue.js
+5. gin_api component
+6. grpc (brief architecture, proto files, binary, HTTP 2.0, unary, stream, SSL, interceptors, cancellation, deadlines, logging, error handling, language interoperability, LB), gRPC as REST API
+7. order handler service
+8. order validator service
+9. search order vue.js and ElasticSearch
+10. instruments vue.js and live price update (redis, websocket, price_producer)
+11. Vue.js brief intro (Vue Cli, VueJS Chrome extension)
+12. Docker
+13. GO language
+14. Redis
+15. Kafka producers and consumers (Backoffice integration)
