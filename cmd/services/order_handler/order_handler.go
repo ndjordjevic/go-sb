@@ -60,13 +60,14 @@ const (
 	exampleServiceName = "lb.example.grpc.io"
 )
 
-var addrs = []string{"localhost:50061", "localhost:50062"}
+var addrs = []string{"order_validator:50061", "order_validator:50062"}
 
 var session *gocql.Session
 
 func init() {
 	// connect to Cassandra cluster
-	cluster := gocql.NewCluster("127.0.0.1")
+	//cluster := gocql.NewCluster("127.0.0.1")
+	cluster := gocql.NewCluster("host.docker.internal")
 	cluster.Keyspace = "go_sb"
 	session, _ = cluster.CreateSession()
 	log.Println("Connected to Cassandra.")
@@ -117,14 +118,16 @@ func writeOrderToESAsync(order common.Order) {
 		// Obtain a client and connect to the default Elasticsearch installation
 		// on 127.0.0.1:9200. Of course you can configure your client to connect
 		// to other hosts and configure it in various other ways.
-		client, err := elastic.NewClient()
+		//client, err := elastic.NewClient()
+		client, err := elastic.NewSimpleClient(elastic.SetURL("http://host.docker.internal:9200"))
 		if err != nil {
 			// Handle error
 			panic(err)
 		}
 
 		// Ping the Elasticsearch server to get e.g. the version number
-		info, code, err := client.Ping("http://127.0.0.1:9200").Do(ctx)
+		//info, code, err := client.Ping("http://localhost:9200").Do(ctx)
+		info, code, err := client.Ping("http://host.docker.internal:9200").Do(ctx)
 		if err != nil {
 			// Handle error
 			panic(err)
@@ -177,7 +180,7 @@ func callOrderValidatorService(order common.Order) *orderpb.ValidateOrderRespons
 
 	// validation grpc client connection
 	clientConn, err := grpc.Dial(fmt.Sprintf("%s:///%s", exampleScheme, exampleServiceName),
-		grpc.WithBalancerName("round_robin"), // comment this to turn off round_robin LB and turn on pic_first (tries to connect to first address and if its not available dials others)
+		//grpc.WithBalancerName("round_robin"), // comment this to turn off round_robin LB and turn on pic_first (tries to connect to first address and if its not available dials others)
 		grpc.WithInsecure())
 
 	if err != nil {

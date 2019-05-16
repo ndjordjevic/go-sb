@@ -51,8 +51,8 @@ func main() {
 	}()
 
 	// price grpc client connection
-	priceClientConn, err := grpc.Dial("localhost:50071", grpc.WithInsecure()) // connect from a localhost
-	//priceClientConn, err := grpc.Dial("host.docker.internal:50071", grpc.WithInsecure()) // connect from a docker container
+	//priceClientConn, err := grpc.Dial("localhost:50071", grpc.WithInsecure()) // connect from a localhost
+	priceClientConn, err := grpc.Dial("localhost:50071", grpc.WithInsecure()) // connect from a docker container
 
 	if err != nil {
 		log.Fatal(err)

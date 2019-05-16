@@ -15,7 +15,8 @@ var session *gocql.Session
 
 func init() {
 	// connect to Cassandra cluster
-	cluster := gocql.NewCluster("127.0.0.1")
+	//cluster := gocql.NewCluster("localhost")
+	cluster := gocql.NewCluster("host.docker.internal")
 	cluster.Keyspace = "go_sb"
 	session, _ = cluster.CreateSession()
 	log.Println("Connected to Cassandra.")
@@ -57,7 +58,7 @@ func checkOrder(req *orderpb.ValidateOrderRequest) bool {
 
 func main() {
 	// validate order grpc service server
-	lis, err := net.Listen("tcp", "localhost:50061") // change this to localhost:50062 to start another instance on a different port
+	lis, err := net.Listen("tcp", ":50061") // change this to localhost:50062 to start another instance on a different port
 
 	if err != nil {
 		log.Fatal(err)

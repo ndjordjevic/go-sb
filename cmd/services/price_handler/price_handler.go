@@ -104,7 +104,7 @@ func newPool() *redis.Pool {
 		// Dial is an application supplied function for creating and
 		// configuring a connection.
 		Dial: func() (redis.Conn, error) {
-			c, err := redis.Dial("tcp", ":6379")
+			c, err := redis.Dial("tcp", "host.docker.internal:6379")
 			if err != nil {
 				panic(err.Error())
 			}
@@ -132,7 +132,7 @@ func FromGOB64(str string) common.InstrumentPrice {
 
 func main() {
 	// price grpc service server
-	lis, err := net.Listen("tcp", "localhost:50071")
+	lis, err := net.Listen("tcp", ":50071")
 
 	if err != nil {
 		log.Fatal(err)

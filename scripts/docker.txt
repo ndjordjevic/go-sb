@@ -78,3 +78,10 @@ docker container run --name gin_api --rm --publish 8010:8010  gin_api:latest
 
 # Run gin_api go_sb app and get into container, run apk add --update curl (to get curl downloaded)
 docker container run --name gin_api --rm -it --publish 8010:8010 gin_api:latest sh
+
+# IMPORTANT create a network for dockerized services to communicate
+docker network create go_sb_network
+# then start a micro-service
+docker container run --name order_handler --rm -it --publish 50051:50051 --network go_sb_network order_handler
+# and start another service with
+docker container run --name order_validator --rm -it --network go_sb_network order_validator
