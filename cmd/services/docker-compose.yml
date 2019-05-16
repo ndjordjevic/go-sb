@@ -1,0 +1,22 @@
+version: '3'
+
+services:
+  order_handler:
+    image: order_handler
+    networks:
+      - go_sb_network
+    ports:
+      - 50051:50051
+  order_validator:
+    image: order_validator
+    networks:
+      - go_sb_network
+  price_handler:
+    image: price_handler
+    networks:
+      - go_sb_network
+    ports:
+      - 50071:50071
+networks:
+  go_sb_network:
+    driver: bridge

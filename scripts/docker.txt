@@ -85,3 +85,9 @@ docker network create go_sb_network
 docker container run --name order_handler --rm -it --publish 50051:50051 --network go_sb_network order_handler
 # and start another service with
 docker container run --name order_validator --rm -it --network go_sb_network order_validator
+
+# start all three docker containerized services
+docker-compose up
+
+# stop all three docker containerized services
+docker-compose down
